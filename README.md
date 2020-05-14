@@ -69,3 +69,7 @@ optional arguments:
 
 
 ```
+
+## Known issues
+### v1.4
+- single echo unwrapping with magnitude and default mask leads to ReadOnlyMemory error. Fixed in v1.4.1
