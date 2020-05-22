@@ -86,6 +86,7 @@ optional arguments:
 ## Known issues
 ### v1.4
 - single echo unwrapping with magnitude and default mask leads to ReadOnlyMemory error. Fixed in v1.4.1
+- binary data type for mask not supported. Fixed in v2.0.1
 
 ## Feedback
 Feature requests and bug reports are welcome!
