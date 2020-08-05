@@ -1,7 +1,7 @@
 # ROMEO Unwrapping
 Unwrapping of 3D and 4D datasets.
 
-Please cite [ROMEO publication] if you use it! The link will follow once it is published.
+Please cite [ROMEO bioRxiv](https://www.biorxiv.org/content/10.1101/2020.07.24.214551v1.abstract) if you use it! The link will update to the peer reviewed version after it is published.
 
 The sourcecode is available under [ROMEO.jl](https://github.com/korbinian90/ROMEO.jl).
 The binaries are a standalone compiled version of [RomeoApp.jl](https://github.com/korbinian90/RomeoApp.jl).
