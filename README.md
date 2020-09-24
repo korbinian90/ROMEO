@@ -26,8 +26,13 @@ On windows (cmd or powershell):
 ```
 $ romeo
 usage: <PROGRAM> [-m MAGNITUDE] [-o OUTPUT] [-t ECHO-TIMES] [-k MASK]
-                 [-i] [-e UNWRAP-ECHOES] [-w WEIGHTS] [-B] [-N]
-                 [-T THRESHOLD] [-v] [-g] [-q] [-Q] [--version] [-h]
+                 [-e UNWRAP-ECHOES] [-w WEIGHTS] [-B]
+                 [--phase-offset-correction] [-i]
+                 [--template TEMPLATE] [-N] [--no-rescale]
+                 [--threshold THRESHOLD] [-v] [-g] [-q] [-Q]
+                 [-s MAX-SEEDS] [--merge-regions] [--correct-regions]
+                 [--wrap-addition WRAP-ADDITION]
+                 [--temporal-uncertain-unwrapping] [--version] [-h]
                  [phase]
 
 positional arguments:
@@ -41,21 +46,16 @@ optional arguments:
                         "unwrapped.nii")
   -t, --echo-times ECHO-TIMES
                         The relative echo times required for temporal
-                        unwrapping (default is 1:n) specified in array
-                        or range syntax (eg. "[1.5,3.0]" or
-                        "3.5:3.5:14") or for multiple volumes with the
-                        same time: "ones(<nr_of_time_points>)".
-                        Warning: No spaces allowed!! ("[1, 2, 3]" is
-                        invalid!)
+                        unwrapping specified in array or range syntax
+                        (eg. "[1.5,3.0]" or "3.5:3.5:14"). (default is
+                        ones(<nr_of_time_points>) for multiple volumes
+                        with the same time) Warning: No spaces
+                        allowed!! ("[1, 2, 3]" is invalid!)
   -k, --mask MASK       nomask | robustmask | <mask_file> (default:
                         "robustmask")
-  -i, --individual-unwrapping
-                        Unwraps the echoes individually (not
-                        temporal). Temporal unwrapping only works when
-                        phase offset is removed (ASPIRE)
   -e, --unwrap-echoes UNWRAP-ECHOES
-                        Unwrap only the specified echoes (default:
-                        ":")
+                        Load only the specified echoes from disk
+                        (default: ":")
   -w, --weights WEIGHTS
                         romeo | romeo2 | romeo3 | romeo4 | bestpath |
                         <4d-weights-file> | <flags>. <flags> are four
@@ -63,11 +63,30 @@ optional arguments:
                         "1010"). The weights are (1)phasecoherence
                         (2)phasegradientcoherence (3)phaselinearity
                         (4)magcoherence (default: "romeo")
-  -B, --compute-B0      EXPERIMENTAL! Calculate combined B0 map in
-                        [rad/s]
+  -B, --compute-B0      Calculate combined B0 map in [Hz]. Phase
+                        offset                correction might be
+                        necessary if not coil-combined with
+                        MCPC3Ds/ASPIRE.
+  --phase-offset-correction
+                        Applies the MCPC3Ds method to perform phase
+                        offset determination and removal (for
+                        multi-echo).
+  -i, --individual-unwrapping
+                        Unwraps the echoes individually (not
+                        temporal). This might be necessary if there is
+                        large movement (timeseries) or
+                        phase-offset-correction is not applicable.
+  --template TEMPLATE   Template echo that is spatially unwrapped and
+                        used for temporal unwrapping (type: Int64,
+                        default: 2)
   -N, --no-mmap         Deactivate memory mapping. Memory mapping
                         might cause problems on network storage
-  -T, --threshold THRESHOLD
+  --no-rescale          Deactivate rescaling of input images. By
+                        default the input phase is rescaled to the
+                        range [-π;π]. This option allows inputting
+                        already unwrapped phase images without
+                        wrapping them first.
+  --threshold THRESHOLD
                         <maximum number of wraps>. Threshold the
                         unwrapped phase to the maximum number of wraps
                         and sets exceeding values to 0 (type: Float64,
@@ -82,9 +101,29 @@ optional arguments:
   -Q, --write-quality-all
                         Writes out an individual quality map for each
                         of the ROMEO weights.
+  -s, --max-seeds MAX-SEEDS
+                        EXPERIMENTAL! Sets the maximum number of seeds
+                        for unwrapping. Higher values allow more
+                        seperated regions. (type: Int64, default: 1)
+  --merge-regions       EXPERIMENTAL! Spatially merges neighboring
+                        regions after unwrapping.
+  --correct-regions     EXPERIMENTAL! Performed after merging. Brings
+                        the median of each region closest to 0 (mod
+                        2π).
+  --wrap-addition WRAP-ADDITION
+                        [0;π] EXPERIMENTAL! Usually the true phase
+                        difference of neighboring voxels cannot exceed
+                        π to be able to unwrap them. This setting
+                        increases the limit and uses 'linear
+                        unwrapping' of 3 voxels in a line. Neighbors
+                        can have (π + wrap-addition) phase difference.
+                        (type: Float64, default: 0.0)
+  --temporal-uncertain-unwrapping
+                        EXPERIMENTAL! Uses spatial unwrapping on
+                        voxels that have high uncertainty values after
+                        temporal unwrapping.
   --version             show version information and exit
   -h, --help            show this help message and exit
-
 ```
 
 ## Known issues
