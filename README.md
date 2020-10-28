@@ -3,10 +3,10 @@ Unwrapping of 3D and 4D datasets.
 
 The link to the newest compiled version (linux and win): https://github.com/korbinian90/ROMEO/releases
 
-Please cite [ROMEO bioRxiv](https://www.biorxiv.org/content/10.1101/2020.07.24.214551v1.abstract) if you use it! The link will update to the peer reviewed version after it is published.
+Please cite [ROMEO MRM](https://onlinelibrary.wiley.com/doi/10.1002/mrm.28563) if you use it!
 
-The sourcecode is available under [ROMEO.jl](https://github.com/korbinian90/ROMEO.jl).
-The binaries are a standalone compiled version of [RomeoApp.jl](https://github.com/korbinian90/RomeoApp.jl).
+The sourcecode is available under [ROMEO.jl](https://github.com/korbinian90/ROMEO.jl).  
+The binaries are a standalone compiled version of [RomeoApp.jl](https://github.com/korbinian90/RomeoApp.jl). The compilation scripts are in [CompileMRI.jl](https://github.com/korbinian90/CompileMRI.jl).
 
 ## Getting Started
 ### Prerequisites
