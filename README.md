@@ -1,6 +1,9 @@
 # ROMEO Unwrapping
-Unwrapping of 3D and 4D datasets.  
-The link to the newest compiled version (linux and win): https://github.com/korbinian90/ROMEO/releases
+Unwrapping of 3D and 4D datasets
+
+### Download Executables
+https://github.com/korbinian90/ROMEO/releases  
+Executables are available for windows, linux and macOS (thanks to Joseph Woods for compiling the macOS version)
 
 ### Publication
 Dymerska, B., Eckstein, K., Bachrata, B., Siow, B., Trattnig, S., Shmueli, K., Robinson, S.D., 2020. Phase Unwrapping with a Rapid Opensource Minimum Spanning TreE AlgOrithm (ROMEO). Magnetic Resonance in Medicine. https://doi.org/10.1002/mrm.28563
