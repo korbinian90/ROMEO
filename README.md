@@ -14,7 +14,9 @@ The binaries are a standalone compiled version of [RomeoApp.jl](https://github.c
 
 ## Getting Started
 ### Prerequisites
-Magnitude and Phase images in NIfTI fileformat (4D images with echoes in the 4th dimension).
+Phase (and optionally Magnitude) images in NIfTI fileformat.  
+For multi-echo/multi-timepoint data, 4D-NIfTI files are used with echoes/timepoints in the 4th dimension.
+Individual 3D files can be merged inte 4D files using [fslmerge](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Fslutils).
 
 ### Compiled Version
 Compiled versions for windows and linux are attached to the release.
@@ -22,11 +24,13 @@ ROMEO is a command line application.
 
 Example usage on linux:
 
-`$ romeo ph.nii -m mag.ii -k nomask -o outputdir`
+`$ romeo ph.nii -m mag.ii -k nomask -t [3,6,9] -o outputdir`
 
 On windows (cmd or powershell):
 
-`>romeo.exe ph.nii -m mag.ii -k nomask -o outputdir`
+`>romeo.exe ph.nii -m mag.ii -k nomask -t [3,6,9] -o outputdir`
+
+Be careful to avoid spaces in the echo time specification!
 
 ### Help on arguments:
 ```
