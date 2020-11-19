@@ -21,7 +21,7 @@ Individual 3D files can be merged into 4D files using [fslmerge](https://fsl.fmr
 ### [Compiled Version](https://github.com/korbinian90/ROMEO/releases  )
 ROMEO is a command line application.
 
-Example usage for multiple time points with identical echo time (fMRI):  
+Example usage for single-echo or multiple time points with identical echo time (fMRI):  
 `$ romeo ph.nii -m mag.ii -k nomask -o outputdir`
 
 Example usage for a 3-echo Scan with TE = [3,6,9] ms  
