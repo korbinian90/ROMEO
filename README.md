@@ -27,6 +27,9 @@ Example usage for single-echo or multiple time points with identical echo time (
 Example usage for a 3-echo Scan with TE = [3,6,9] ms:  
 `$ romeo ph.nii -m mag.ii -k nomask -t [3,6,9] -o outputdir`
 
+Depending on the shell, it might be necessary to quote the echo times:  
+`$ romeo ph.nii -m mag.ii -k nomask -t "[3,6,9]" -o outputdir`
+
 ### Help on arguments:
 ```
 $ romeo
@@ -137,6 +140,8 @@ optional arguments:
 - binary data type for mask not supported. Fixed in v2.0.1
 ### v2.0.1
 - input scaling issue (with INT16). Fixed in v2.0.2
+### v3.1
+- quality map output is corrupted
 
 ## Feedback
 Feature requests and bug reports are welcome!
