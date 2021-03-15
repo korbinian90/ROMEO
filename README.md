@@ -141,7 +141,7 @@ optional arguments:
 ### v2.0.1
 - input scaling issue (with INT16). Fixed in v2.0.2
 ### v3.1
-- quality map output is corrupted
+- quality map output is corrupted. Fixed in v3.1.1
 
 ## Feedback
 Feature requests and bug reports are welcome!
