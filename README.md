@@ -34,7 +34,7 @@ Depending on the shell, it might be necessary to quote the echo times:
 ```
 $ romeo
 usage: <PROGRAM> [-m MAGNITUDE] [-o OUTPUT] [-t ECHO-TIMES] [-k MASK]
-                 [-e UNWRAP-ECHOES] [-w WEIGHTS] [-B]
+                 [-u] [-e UNWRAP-ECHOES] [-w WEIGHTS] [-B]
                  [--phase-offset-correction] [-i]
                  [--template TEMPLATE] [-N] [--no-rescale]
                  [--threshold THRESHOLD] [-v] [-g] [-q] [-Q]
@@ -61,6 +61,8 @@ optional arguments:
                         allowed!! ("[1, 2, 3]" is invalid!)
   -k, --mask MASK       nomask | robustmask | <mask_file> (default:
                         "robustmask")
+  -u, --mask-unwrapped  Apply the mask on the unwrapped result. If
+                        mask is "nomask", sets it to "robustmask".
   -e, --unwrap-echoes UNWRAP-ECHOES
                         Load only the specified echoes from disk
                         (default: ":")
@@ -93,7 +95,7 @@ optional arguments:
                         default the input phase is rescaled to the
                         range [-π;π]. This option allows inputting
                         already unwrapped phase images without
-                        wrapping them first.
+                        manually wrapping them first.
   --threshold THRESHOLD
                         <maximum number of wraps>. Threshold the
                         unwrapped phase to the maximum number of wraps
