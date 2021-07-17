@@ -27,45 +27,45 @@ Example usage for single-echo or multiple time points with identical echo time (
 Example usage for a 3-echo Scan with TE = [3,6,9] ms:  
 `$ romeo ph.nii -m mag.ii -k nomask -t [3,6,9] -o outputdir`
 
-Depending on the shell, it might be necessary to quote the echo times:  
-`$ romeo ph.nii -m mag.ii -k nomask -t "[3,6,9]" -o outputdir`
+Note that echo times are required for unwrapping multi-echo data.
 
 ### Help on arguments:
 ```
 $ romeo
-usage: <PROGRAM> [-m MAGNITUDE] [-o OUTPUT] [-t ECHO-TIMES] [-k MASK]
-                 [-u] [-e UNWRAP-ECHOES] [-w WEIGHTS] [-B]
-                 [--phase-offset-correction] [-i]
-                 [--template TEMPLATE] [-N] [--no-rescale]
+usage: <PROGRAM> [-p PHASE] [-m MAGNITUDE] [-o OUTPUT]
+                 [-t ECHO-TIMES [ECHO-TIMES...]] [-k MASK [MASK...]]
+                 [-u] [-e UNWRAP-ECHOES [UNWRAP-ECHOES...]]
+                 [-w WEIGHTS] [-B]
+                 [--phase-offset-correction [PHASE-OFFSET-CORRECTION]]
+                 [-i] [--template TEMPLATE] [-N] [--no-rescale]
                  [--threshold THRESHOLD] [-v] [-g] [-q] [-Q]
                  [-s MAX-SEEDS] [--merge-regions] [--correct-regions]
                  [--wrap-addition WRAP-ADDITION]
                  [--temporal-uncertain-unwrapping] [--version] [-h]
-                 [phase]
-
-positional arguments:
-  phase                 The phase image used for unwrapping
 
 optional arguments:
+  -p, --phase PHASE     The phase image that should be unwrapped
   -m, --magnitude MAGNITUDE
                         The magnitude image (better unwrapping if
                         specified)
   -o, --output OUTPUT   The output path or filename (default:
                         "unwrapped.nii")
-  -t, --echo-times ECHO-TIMES
-                        The relative echo times required for temporal
+  -t, --echo-times ECHO-TIMES [ECHO-TIMES...]
+                        The echo times required for temporal
                         unwrapping specified in array or range syntax
-                        (eg. "[1.5,3.0]" or "3.5:3.5:14"). (default is
-                        ones(<nr_of_time_points>) for multiple volumes
-                        with the same time) Warning: No spaces
-                        allowed!! ("[1, 2, 3]" is invalid!)
-  -k, --mask MASK       nomask | robustmask | <mask_file> (default:
-                        "robustmask")
+                        (eg. "[1.5,3.0]" or "3.5:3.5:14"). For
+                        identical echo times, "-t epi" can be used
+                        with the possibility to specify the echo time
+                        as e.g. "-t epi 5.3" (for B0 calculation).
+  -k, --mask MASK [MASK...]
+                        nomask | qualitymask <threshold> | robustmask
+                        | <mask_file>. <threshold> for qualitymask in
+                        [0;1] (default: ["robustmask"])
   -u, --mask-unwrapped  Apply the mask on the unwrapped result. If
                         mask is "nomask", sets it to "robustmask".
-  -e, --unwrap-echoes UNWRAP-ECHOES
+  -e, --unwrap-echoes UNWRAP-ECHOES [UNWRAP-ECHOES...]
                         Load only the specified echoes from disk
-                        (default: ":")
+                        (default: [":"])
   -w, --weights WEIGHTS
                         romeo | romeo2 | romeo3 | romeo4 | bestpath |
                         <4d-weights-file> | <flags>. <flags> are four
@@ -74,13 +74,16 @@ optional arguments:
                         (2)phasegradientcoherence (3)phaselinearity
                         (4)magcoherence (default: "romeo")
   -B, --compute-B0      Calculate combined B0 map in [Hz]. Phase
-                        offset                correction might be
-                        necessary if not coil-combined with
-                        MCPC3Ds/ASPIRE.
-  --phase-offset-correction
-                        Applies the MCPC3Ds method to perform phase
-                        offset determination and removal (for
-                        multi-echo).
+                        offset correction might be necessary if not
+                        coil-combined with MCPC3Ds/ASPIRE.
+  --phase-offset-correction [PHASE-OFFSET-CORRECTION]
+                        on | off | bipolar. Applies the MCPC3Ds method
+                        to perform phase offset determination and
+                        removal (for multi-echo). This option also
+                        allows 5D input, where the 5th dimension is
+                        channels. "bipolar" removes eddy current
+                        artefacts (requires >= 3 echoes). (default:
+                        "off", without arg: "on")
   -i, --individual-unwrapping
                         Unwraps the echoes individually (not
                         temporal). This might be necessary if there is
