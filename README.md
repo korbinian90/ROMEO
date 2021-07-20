@@ -76,14 +76,15 @@ optional arguments:
   -B, --compute-B0      Calculate combined B0 map in [Hz]. Phase
                         offset correction might be necessary if not
                         coil-combined with MCPC3Ds/ASPIRE.
-  --phase-offset-correction [PHASE-OFFSET-CORRECTION]
+  --phase-offset-correction, --coil-combination [PHASE-OFFSET-CORRECTION]
                         on | off | bipolar. Applies the MCPC3Ds method
                         to perform phase offset determination and
                         removal (for multi-echo). This option also
                         allows 5D input, where the 5th dimension is
-                        channels. "bipolar" removes eddy current
-                        artefacts (requires >= 3 echoes). (default:
-                        "off", without arg: "on")
+                        channels. Coil combination will be performed.
+                        "bipolar" removes eddy current artefacts
+                        (requires >= 3 echoes). (default: "off",
+                        without arg: "on")
   -i, --individual-unwrapping
                         Unwraps the echoes individually (not
                         temporal). This might be necessary if there is
