@@ -1,12 +1,16 @@
 # ROMEO Unwrapping
-Unwrapping of 3D and 4D datasets
+Unwrapping of 3D and 4D datasets.
+Coil combination of 5D datasets.
 
 ### Download Executables
 https://github.com/korbinian90/ROMEO/releases  
-Executables are available for windows, linux and macOS (thanks to Joseph Woods for compiling the [macOS version v3.1](https://github.com/korbinian90/ROMEO/releases/tag/v3.1))
+Executables are available for windows, linux and macOS
 
 ### Publication
-Dymerska, B., Eckstein, K., Bachrata, B., Siow, B., Trattnig, S., Shmueli, K., Robinson, S.D., 2020. Phase Unwrapping with a Rapid Opensource Minimum Spanning TreE AlgOrithm (ROMEO). Magnetic Resonance in Medicine. https://doi.org/10.1002/mrm.28563
+**ROMEO**: Dymerska, B., Eckstein, K., Bachrata, B., Siow, B., Trattnig, S., Shmueli, K., Robinson, S.D., 2020. Phase Unwrapping with a Rapid Opensource Minimum Spanning TreE AlgOrithm (ROMEO). Magnetic Resonance in Medicine. https://doi.org/10.1002/mrm.28563
+
+**MCPC-3D-S Coil Combination**:
+Eckstein, K., Dymerska, B., Bachrata, B., Bogner, W., Poljanc, K., Trattnig, S., Robinson, S.D., 2018. Computationally Efficient Combination of Multi-channel Phase Data From Multi-echo Acquisitions (ASPIRE). Magnetic Resonance in Medicine 79, 2996–3006. https://doi.org/10.1002/mrm.26963
 
 ### Repositories
 The sourcecode is available under [ROMEO.jl](https://github.com/korbinian90/ROMEO.jl).  
@@ -15,10 +19,11 @@ The binaries are a standalone compiled version of [RomeoApp.jl](https://github.c
 ## Getting Started
 ### Prerequisites
 Phase (and optionally Magnitude) images in NIfTI fileformat.  
-For multi-echo/multi-timepoint data, 4D-NIfTI files are used with echoes/timepoints in the 4th dimension.
-Individual 3D files can be merged into 4D files using [fslmerge](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Fslutils).
+For multi-echo/multi-timepoint data, 4D-NIfTI files are used with echoes/timepoints in the 4th dimension.   
+Individual 3D files can be merged into 4D files using [fslmerge](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Fslutils).  
+If 5D-NIfTI datasets with channels in the 5th dimension are given, coil combination can be performed as first step. 
 
-### [Compiled Version](https://github.com/korbinian90/ROMEO/releases  )
+### [Compiled Version](https://github.com/korbinian90/ROMEO/releases)
 ROMEO is a command line application.
 
 Example usage for single-echo or multiple time points with identical echo time (fMRI):  
