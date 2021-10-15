@@ -72,12 +72,14 @@ optional arguments:
                         Load only the specified echoes from disk
                         (default: [":"])
   -w, --weights WEIGHTS
-                        romeo | romeo2 | romeo3 | romeo4 | bestpath |
-                        <4d-weights-file> | <flags>. <flags> are four
-                        bits to activate individual weights (eg.
-                        "1010"). The weights are (1)phasecoherence
+                        romeo | romeo2 | romeo3 | romeo4 | romeo6 |
+                        bestpath | <4d-weights-file> | <flags>.
+                        <flags> are up to 6 bits to activate
+                        individual weights (eg. "1010"). The weights
+                        are (1)phasecoherence
                         (2)phasegradientcoherence (3)phaselinearity
-                        (4)magcoherence (default: "romeo")
+                        (4)magcoherence (5)magweight (6)magweight2
+                        (default: "romeo")
   -B, --compute-B0      Calculate combined B0 map in [Hz]. Phase
                         offset correction might be necessary if not
                         coil-combined with MCPC3Ds/ASPIRE.
