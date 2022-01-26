@@ -94,6 +94,9 @@ optional arguments:
                         "bipolar" removes eddy current artefacts
                         (requires >= 3 echoes). (default: "off",
                         without arg: "on")
+  --write-phase-offsets
+                        Saves the estimated phase offsets to the
+                        output folder
   -i, --individual-unwrapping
                         Unwraps the echoes individually (not
                         temporal). This might be necessary if there is
