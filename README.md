@@ -4,9 +4,8 @@ Coil combination of 5D datasets.
 
 ![ROMEO](https://user-images.githubusercontent.com/1307522/144416428-0c51a0e5-cb07-4b7d-8571-9fa2dc33f580.png)
 
-### Download Executables
-https://github.com/korbinian90/ROMEO/releases  
-Executables are available for windows, linux and macOS
+### [Download Executables for Linux, Windows and macOS](https://github.com/korbinian90/ROMEO/releases)
+https://github.com/korbinian90/ROMEO/releases
 
 ### Publication
 **ROMEO**: Dymerska, B., Eckstein, K., Bachrata, B., Siow, B., Trattnig, S., Shmueli, K., Robinson, S.D., 2020. Phase Unwrapping with a Rapid Opensource Minimum Spanning TreE AlgOrithm (ROMEO). Magnetic Resonance in Medicine. https://doi.org/10.1002/mrm.28563
