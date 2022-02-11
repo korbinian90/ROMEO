@@ -4,7 +4,7 @@ Coil combination of 5D datasets.
 
 ![ROMEO](https://user-images.githubusercontent.com/1307522/144416428-0c51a0e5-cb07-4b7d-8571-9fa2dc33f580.png)
 
-### [Download Executables for Linux, Windows and macOS](https://github.com/korbinian90/ROMEO/releases)
+### Download Executables for [Linux](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.7), [Windows](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.8) and [macOS](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.7)
 https://github.com/korbinian90/ROMEO/releases
 
 ### Publication
