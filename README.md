@@ -159,6 +159,8 @@ optional arguments:
 - input scaling issue (with INT16). Fixed in v2.0.2
 ### v3.1
 - quality map output is corrupted. Fixed in v3.1.1
+### MacOS
+To run romeo, multiple files have to be flagged as save to execute. Additionally, the executable might only run on specific OS versions. You can try the newest MacOS executable, v3.2.2 and v3.1. This problem is still unsolved and no clear way how to improve the compatibility
 
 ## Feedback
 Feature requests and bug reports are welcome!
