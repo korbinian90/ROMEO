@@ -160,7 +160,7 @@ optional arguments:
 ### v3.1
 - quality map output is corrupted. Fixed in v3.1.1
 ### MacOS
-To run romeo, multiple files have to be flagged as save to execute. Additionally, the executable might only run on specific OS versions. You can try the newest MacOS executable, v3.2.2 and v3.1. This problem is still unsolved and no clear way how to improve the compatibility
+To run romeo, multiple files have to be flagged as save to execute. Additionally, the executable might only run on specific OS versions. You can try the [newest](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.7) MacOS executable, [v3.2.2](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.2) and [v3.1](https://github.com/korbinian90/ROMEO/releases/tag/v3.1). This problem is still unsolved and no clear way how to improve the compatibility
 
 ## Feedback
 Feature requests and bug reports are welcome!
