@@ -7,13 +7,17 @@ Coil combination of 5D datasets.
 ### Download Executables for [Linux](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.8), [Windows](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.8) and [macOS](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.7)
 https://github.com/korbinian90/ROMEO/releases
 
+### Run in [Neurodesk](https://neurodesk.github.io/)
+Neurodesk is an analysis environment for reproducible neuroimaging running in a docker container.
+It comes with a range of useful tools preinstalled, including ROMEO.
+
 ### Publication
 **ROMEO**: Dymerska, B., Eckstein, K., Bachrata, B., Siow, B., Trattnig, S., Shmueli, K., Robinson, S.D., 2020. Phase Unwrapping with a Rapid Opensource Minimum Spanning TreE AlgOrithm (ROMEO). Magnetic Resonance in Medicine. https://doi.org/10.1002/mrm.28563
 
 **MCPC-3D-S Coil Combination**:
 Eckstein, K., Dymerska, B., Bachrata, B., Bogner, W., Poljanc, K., Trattnig, S., Robinson, S.D., 2018. Computationally Efficient Combination of Multi-channel Phase Data From Multi-echo Acquisitions (ASPIRE). Magnetic Resonance in Medicine 79, 2996–3006. https://doi.org/10.1002/mrm.26963
 
-### Repositories
+### Related Repositories
 The sourcecode is available under [ROMEO.jl](https://github.com/korbinian90/ROMEO.jl).  
 The binaries are a standalone compiled version of [RomeoApp.jl](https://github.com/korbinian90/RomeoApp.jl). The compilation scripts are in [CompileMRI.jl](https://github.com/korbinian90/CompileMRI.jl).
 
