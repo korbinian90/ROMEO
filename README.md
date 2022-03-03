@@ -4,10 +4,12 @@ Coil combination of 5D datasets.
 
 ![ROMEO](https://user-images.githubusercontent.com/1307522/144416428-0c51a0e5-cb07-4b7d-8571-9fa2dc33f580.png)
 
-### Download Executables for [Linux](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.8), [Windows](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.8) and [macOS](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.7)
-https://github.com/korbinian90/ROMEO/releases
+## Download Executables for [Linux](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.8), [Windows](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.8) and [macOS](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.7)
+New releases will be bundled with CLEAR-SWI and MCPC-3D-S as mritools package (same structure of executables):
 
-### Run in [Neurodesk](https://neurodesk.github.io/)
+**https://github.com/korbinian90/CompileMRI.jl/releases**
+
+## Run in [Neurodesk](https://neurodesk.github.io/)
 Neurodesk is an analysis environment for reproducible neuroimaging running in a docker container.
 It comes with a range of useful tools preinstalled, including ROMEO.
 
@@ -39,7 +41,19 @@ Example usage for a 3-echo Scan with TE = [3,6,9] ms:
 
 Note that echo times are required for unwrapping multi-echo data.
 
-### Help on arguments:
+## Different Use Cases
+### Multi-Echo
+If multi-echo data is available, supplying ROMEO with multi-echo information should improve the unwrapping accuracy. The same is true for magnitude information.
+
+### Phase Offsets
+If the multi-echo data contains **large phase offsets** (phase at echo time zero), default template unwrapping might fail. Setting the `individual-unwrapping` flag is a solution, as it performs spatial unwrapping for each echo instead. The computed B0 map is not corrected for remaining phase offsets.
+
+For proper handling, the phase offsest can be removed using `MCPC-3D-S` with the option `phase-offset-correction`. This works for monopolar and bipolar data, already combined or uncombined channels. However, this requires "linear phase evolution". If the phase is already "corrupted" by other coil combination algorithms, it might not be possible to estimate and remove the phase offsets.
+
+### Repeated Measurements (EPI)
+4D data with an equal echo time for all volumes should be unwrapped as 4D for best accuracy and temporal stability. The echo times can be set to `-t epi`.
+
+## Help on arguments:
 ```
 $ romeo
 usage: <PROGRAM> [-p PHASE] [-m MAGNITUDE] [-o OUTPUT]
