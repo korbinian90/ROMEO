@@ -4,24 +4,37 @@ Coil combination of 5D datasets.
 
 ![ROMEO](https://user-images.githubusercontent.com/1307522/144416428-0c51a0e5-cb07-4b7d-8571-9fa2dc33f580.png)
 
-## Download Executables for [Linux](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.8), [Windows](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.8) and [macOS](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.7)
-New releases will be bundled with CLEAR-SWI and MCPC-3D-S as mritools package (same structure of executables):
+## Download ROMEO
+Ordered from simple to more involved approaches.
+### Option 1: [Download Executables for Linux and Windows (mritools)](https://github.com/korbinian90/CompileMRI.jl/releases)
 
-**https://github.com/korbinian90/CompileMRI.jl/releases**
+**Download link for mritools: https://github.com/korbinian90/CompileMRI.jl/releases**
 
-## Run in [Neurodesk](https://neurodesk.github.io/)
+*For a compiled MacOS version, see [MacOS](https://github.com/korbinian90/ROMEO/edit/master/README.md#macos), but the suggested way is Option 4*
+
+### Option 2: Run in [Neurodesk](https://neurodesk.github.io/) (every OS)
 Neurodesk is an analysis environment for reproducible neuroimaging running in a docker container.
 It comes with a range of useful tools preinstalled, including ROMEO.
+(https://neurodesk.github.io/)
 
-### Publication
+### Option 3: Use the julia command line caller (every OS)
+Step by step explanation here: https://github.com/korbinian90/RomeoApp.jl
+
+### Option 4: Compile ROMEO (every OS)
+Follow the steps in https://github.com/korbinian90/CompileMRI.jl
+
+### Option 5: Use within julia (every OS)
+https://github.com/korbinian90/ROMEO.jl
+
+## Publication
 **ROMEO**: Dymerska, B., Eckstein, K., Bachrata, B., Siow, B., Trattnig, S., Shmueli, K., Robinson, S.D., 2020. Phase Unwrapping with a Rapid Opensource Minimum Spanning TreE AlgOrithm (ROMEO). Magnetic Resonance in Medicine. https://doi.org/10.1002/mrm.28563
 
 **MCPC-3D-S Coil Combination**:
 Eckstein, K., Dymerska, B., Bachrata, B., Bogner, W., Poljanc, K., Trattnig, S., Robinson, S.D., 2018. Computationally Efficient Combination of Multi-channel Phase Data From Multi-echo Acquisitions (ASPIRE). Magnetic Resonance in Medicine 79, 2996–3006. https://doi.org/10.1002/mrm.26963
 
-### Related Repositories
+## Related Repositories
 The sourcecode is available under [ROMEO.jl](https://github.com/korbinian90/ROMEO.jl).  
-The binaries are a standalone compiled version of [RomeoApp.jl](https://github.com/korbinian90/RomeoApp.jl). The compilation scripts are in [CompileMRI.jl](https://github.com/korbinian90/CompileMRI.jl).
+The binaries are a standalone compiled version of [RomeoApp.jl](https://github.com/korbinian90/RomeoApp.jl). The compilation scripts and recent releases are in [CompileMRI.jl](https://github.com/korbinian90/CompileMRI.jl).
 
 ## Getting Started
 ### Prerequisites
@@ -178,7 +191,7 @@ optional arguments:
 ### v3.1
 - quality map output is corrupted. Fixed in v3.1.1
 ### MacOS
-To run romeo, multiple files have to be flagged as save to execute. Additionally, the executable might only run on specific OS versions. You can try the [newest](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.7) MacOS executable, [v3.2.2](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.2) and [v3.1](https://github.com/korbinian90/ROMEO/releases/tag/v3.1). This problem is still unsolved and no clear way how to improve the compatibility
+To run romeo executables on MacOS, multiple files have to be flagged as save to execute. Additionally, the executable might only run on specific OS versions. You can try the [newest](https://github.com/korbinian90/CompileMRI.jl/releases) MacOS executable, [v3.2.2](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.2) and [v3.1](https://github.com/korbinian90/ROMEO/releases/tag/v3.1). This problem is still unsolved and no clear way how to improve the compatibility
 
 ## Feedback
 Feature requests and bug reports are welcome!
