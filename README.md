@@ -1,15 +1,13 @@
 # ROMEO Unwrapping
 Unwrapping of 3D and 4D datasets.
-Coil combination of 5D datasets.
+Coil combination of 5D datasets.  
 
 ![ROMEO](https://user-images.githubusercontent.com/1307522/144416428-0c51a0e5-cb07-4b7d-8571-9fa2dc33f580.png)
 
 ## Download ROMEO
 Ordered from simple to more involved approaches.
 ### Option 1: [Download Executables for Linux and Windows (mritools)](https://github.com/korbinian90/CompileMRI.jl/releases)
-
-**Download link for mritools: https://github.com/korbinian90/CompileMRI.jl/releases**
-
+**Download link for mritools: https://github.com/korbinian90/CompileMRI.jl/releases**  
 *For a compiled MacOS version, see [MacOS](https://github.com/korbinian90/ROMEO/edit/master/README.md#macos), but the suggested way is Option 4*
 
 ### Option 2: Run in [Neurodesk](https://neurodesk.github.io/) (every OS)
@@ -32,10 +30,6 @@ https://github.com/korbinian90/ROMEO.jl
 **MCPC-3D-S Coil Combination**:
 Eckstein, K., Dymerska, B., Bachrata, B., Bogner, W., Poljanc, K., Trattnig, S., Robinson, S.D., 2018. Computationally Efficient Combination of Multi-channel Phase Data From Multi-echo Acquisitions (ASPIRE). Magnetic Resonance in Medicine 79, 2996–3006. https://doi.org/10.1002/mrm.26963
 
-## Related Repositories
-The sourcecode is available under [ROMEO.jl](https://github.com/korbinian90/ROMEO.jl).  
-The binaries are a standalone compiled version of [RomeoApp.jl](https://github.com/korbinian90/RomeoApp.jl). The compilation scripts and recent releases are in [CompileMRI.jl](https://github.com/korbinian90/CompileMRI.jl).
-
 ## Getting Started
 ### Prerequisites
 Phase (and optionally Magnitude) images in NIfTI fileformat.  
@@ -43,13 +37,16 @@ For multi-echo/multi-timepoint data, 4D-NIfTI files are used with echoes/timepoi
 Individual 3D files can be merged into 4D files using [fslmerge](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Fslutils).  
 If 5D-NIfTI datasets with channels in the 5th dimension are given, coil combination can be performed as first step. 
 
-### [Compiled Version](https://github.com/korbinian90/ROMEO/releases)
-ROMEO is a command line application.
+### Run ROMEO
+ROMEO is a command line application. The binary is in the folder `mritools/bin`
 
-Example usage for single-echo or multiple time points with identical echo time (fMRI):  
+Example usage for single-echo data:  
 `$ romeo ph.nii -m mag.ii -k nomask -o outputdir`
 
-Example usage for a 3-echo Scan with TE = [3,6,9] ms:  
+Example for multiple time points with identical echo time (fMRI):  
+`$ romeo ph.nii -m mag.ii -k nomask -t epi -o outputdir`
+
+Example usage for a 3-echo scan with TE = [3,6,9] ms:  
 `$ romeo ph.nii -m mag.ii -k nomask -t [3,6,9] -o outputdir`
 
 Note that echo times are required for unwrapping multi-echo data.
@@ -181,6 +178,10 @@ optional arguments:
   --version             show version information and exit
   -h, --help            show this help message and exit
 ```
+
+## Related Repositories
+The sourcecode is available under [ROMEO.jl](https://github.com/korbinian90/ROMEO.jl).  
+The binaries are a standalone compiled version of [RomeoApp.jl](https://github.com/korbinian90/RomeoApp.jl). The compilation scripts and recent releases are in [CompileMRI.jl](https://github.com/korbinian90/CompileMRI.jl).
 
 ## Known issues
 ### v1.4
