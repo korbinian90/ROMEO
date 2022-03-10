@@ -8,7 +8,7 @@ Coil combination of 5D datasets.
 Ordered from simple to more involved approaches.
 ### Option 1: [Download Executables for Linux and Windows (mritools)](https://github.com/korbinian90/CompileMRI.jl/releases)
 **Download link for mritools: https://github.com/korbinian90/CompileMRI.jl/releases**  
-*For a compiled MacOS version, see [MacOS](https://github.com/korbinian90/ROMEO/edit/master/README.md#macos), but the suggested way is Option 4*
+*For a compiled MacOS version, see [MacOS](https://github.com/korbinian90/ROMEO#macos), but the suggested way is Option 4*
 
 ### Option 2: Run in [Neurodesk](https://neurodesk.github.io/) (every OS)
 Neurodesk is an analysis environment for reproducible neuroimaging running in a docker container.
