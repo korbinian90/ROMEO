@@ -4,9 +4,9 @@ Coil combination of 5D datasets.
 
 ![ROMEO](https://user-images.githubusercontent.com/1307522/144416428-0c51a0e5-cb07-4b7d-8571-9fa2dc33f580.png)
 
-## Download ROMEO
+## Get ROMEO
 Ordered from simple to more involved approaches.
-### Option 1: [Download Executables for Linux and Windows (mritools)](https://github.com/korbinian90/CompileMRI.jl/releases)
+### Option 1: [Download standalone executable within mritools (Linux and Windows)](https://github.com/korbinian90/CompileMRI.jl/releases)
 **Download link for mritools: https://github.com/korbinian90/CompileMRI.jl/releases**  
 *For a compiled MacOS version, see [MacOS](https://github.com/korbinian90/ROMEO#macos), but the suggested way is Option 4*
 
