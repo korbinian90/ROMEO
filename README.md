@@ -7,8 +7,8 @@ Coil combination of 5D datasets.
 ## Get ROMEO
 Ordered from simple to more involved approaches.
 ### Option 1: [Download standalone executable within mritools (Linux and Windows)](https://github.com/korbinian90/CompileMRI.jl/releases)
-**Download link for mritools: https://github.com/korbinian90/CompileMRI.jl/releases**  
-*For a compiled MacOS version, see [MacOS](https://github.com/korbinian90/ROMEO#macos), but the suggested way is Option 4*
+**Download link for mritools as plain text: https://github.com/korbinian90/CompileMRI.jl/releases**  
+*If a compiled MacOS version is required, see [Known-issues/MacOS](https://github.com/korbinian90/ROMEO#macos), but the suggested way is Option 4*
 
 ### Option 2: Run in [Neurodesk](https://neurodesk.github.io/) (every OS)
 Neurodesk is an analysis environment for reproducible neuroimaging running in a docker container.
@@ -193,6 +193,16 @@ The binaries are a standalone compiled version of [RomeoApp.jl](https://github.c
 - quality map output is corrupted. Fixed in v3.1.1
 ### MacOS
 To run romeo executables on MacOS, multiple files have to be flagged as save to execute. Additionally, the executable might only run on specific OS versions. You can try the [newest](https://github.com/korbinian90/CompileMRI.jl/releases) MacOS executable, [v3.2.2](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.2) and [v3.1](https://github.com/korbinian90/ROMEO/releases/tag/v3.1). This problem is still unsolved and no clear way how to improve the compatibility
+
+### MATLAB `libstdc++` error
+Problem: ROMEO crashes with version conflicts of `libstdc++` when called within MATLAB via `unix()` or `system()`.  
+Reason: The `libstdc++` library is already loaded in MATLAB, which causes a conflict if the version is older than what ROMEO expects.  
+Solution: Use `LD_PRELOAD` to specify the newer `libstdc++` version before running matlab  
+Example:  
+```bash
+$ LD_PRELOAD=/<path-to-romeo>/mritools_Linux_3.3.5/lib/julia/libstc++.so.6.0.29
+$ matlab
+```
 
 ## Feedback
 Feature requests and bug reports are welcome!
