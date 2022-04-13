@@ -35,7 +35,7 @@ Eckstein, K., Dymerska, B., Bachrata, B., Bogner, W., Poljanc, K., Trattnig, S.,
 Phase (and optionally Magnitude) images in NIfTI fileformat.  
 For multi-echo/multi-timepoint data, 4D-NIfTI files are used with echoes/timepoints in the 4th dimension.   
 Individual 3D files can be merged into 4D files using [fslmerge](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Fslutils).  
-If 5D-NIfTI datasets with channels in the 5th dimension are given, coil combination can be performed as first step. 
+If 5D-NIfTI datasets with channels in the 5th dimension are given, coil combination is performed as first step. 
 
 ### Run ROMEO
 ROMEO is a command line application. The binary is in the folder `mritools/bin`
@@ -58,10 +58,8 @@ Note that echo times are required for unwrapping multi-echo data.
 ### Multi-Echo
 If multi-echo data is available, supplying ROMEO with multi-echo information should improve the unwrapping accuracy. The same is true for magnitude information.
 
-### Phase Offsets
-If the multi-echo data contains **large phase offsets** (phase at echo time zero), default template unwrapping might fail. Setting the `individual-unwrapping` flag is a solution, as it performs spatial unwrapping for each echo instead. The computed B0 map is not corrected for remaining phase offsets.
-
-For proper handling, the phase offsest can be removed using `MCPC-3D-S` with the option `phase-offset-correction`. This works for monopolar and bipolar data, already combined or uncombined channels. However, this requires "linear phase evolution". If the phase is already "corrupted" by other coil combination algorithms, it might not be possible to estimate and remove the phase offsets.
+### Coil Combination
+Coil combination will be automatically performed for 5D datasets using `MCPC-3D-S`. The echoes have to be in the 4th dimension and the channels in the 5th dimension. For bipolar datasets use `--phase-offset-correction bipolar` as additional argument (bipolar correction requires >= 3 echoes).
 
 ### Repeated Measurements (EPI)
 4D data with an equal echo time for all volumes should be unwrapped as 4D for best accuracy and temporal stability. The echo times can be set to `-t epi`.
@@ -69,6 +67,11 @@ For proper handling, the phase offsest can be removed using `MCPC-3D-S` with the
 ### Setting the Template Echo
 In certain cases, the phase of the first echo/time-point looks differently than the rest of the acquisition, which can occur due to flow compensation of only the first echo or not having reached the steady state in fMRI. This might cause template unwrapping to fail, as the first echo is chosen as the template by default.  
 With the optional argument `--template 2`, this can be changed to the second (or any other) echo/time-point.
+
+### Phase Offsets
+If the multi-echo data contains **large phase offsets** (phase at echo time zero), default template unwrapping might fail. Setting the `individual-unwrapping` flag is a solution, as it performs spatial unwrapping for each echo instead. The computed B0 map is not corrected for remaining phase offsets.
+
+For proper handling, the phase offsest can be removed using `MCPC-3D-S` with the option `phase-offset-correction`. This works for monopolar and bipolar data, already combined or uncombined channels. However, this requires "linear phase evolution". If the phase is already "corrupted" by other coil combination algorithms, it might not be possible to estimate and remove the phase offsets.
 
 ## Help on arguments:
 ```
