@@ -40,6 +40,9 @@ If 5D-NIfTI datasets with channels in the 5th dimension are given, coil combinat
 ### Run ROMEO
 ROMEO is a command line application. The binary is in the folder `mritools/bin`
 
+Example usage for B0-mapping with a 5-echo scan with TE = [3,6,9,12,15] ms:  
+`$ romeo ph.nii -m mag.ii -B -t 3:3:15 -o outputdir`
+
 Example usage for single-echo data:  
 `$ romeo ph.nii -m mag.ii -k nomask -o outputdir`
 
@@ -47,7 +50,7 @@ Example for multiple time points with identical echo time (fMRI):
 `$ romeo ph.nii -m mag.ii -k nomask -t epi -o outputdir`
 
 Example usage for a 3-echo scan with TE = [3,6,9] ms:  
-`$ romeo ph.nii -m mag.ii -k nomask -t [3,6,9] -o outputdir`
+`$ romeo ph.nii -m mag.ii -t [3,6,9] -o outputdir`
 
 Note that echo times are required for unwrapping multi-echo data.
 
@@ -63,18 +66,25 @@ For proper handling, the phase offsest can be removed using `MCPC-3D-S` with the
 ### Repeated Measurements (EPI)
 4D data with an equal echo time for all volumes should be unwrapped as 4D for best accuracy and temporal stability. The echo times can be set to `-t epi`.
 
+### Setting the Template Echo
+In certain cases, the phase of the first echo/time-point looks differently than the rest of the acquisition, which can occur due to flow compensation of only the first echo or not having reached the steady state in fMRI. This might cause template unwrapping to fail, as the first echo is chosen as the template by default.  
+With the optional argument `--template 2`, this can be changed to the second (or any other) echo/time-point.
+
 ## Help on arguments:
 ```
+
 $ romeo
 usage: <PROGRAM> [-p PHASE] [-m MAGNITUDE] [-o OUTPUT]
                  [-t ECHO-TIMES [ECHO-TIMES...]] [-k MASK [MASK...]]
                  [-u] [-e UNWRAP-ECHOES [UNWRAP-ECHOES...]]
                  [-w WEIGHTS] [-B]
                  [--phase-offset-correction [PHASE-OFFSET-CORRECTION]]
-                 [-i] [--template TEMPLATE] [-N] [--no-rescale]
-                 [--threshold THRESHOLD] [-v] [-g] [-q] [-Q]
-                 [-s MAX-SEEDS] [--merge-regions] [--correct-regions]
-                 [--wrap-addition WRAP-ADDITION]
+                 [--coil-combination [COIL-COMBINATION]]
+                 [--phase-offset-smoothing-sigma-mm PHASE-OFFSET-SMOOTHING-SIGMA-MM [PHASE-OFFSET-SMOOTHING-SIGMA-MM...]]
+                 [--write-phase-offsets] [-i] [--template TEMPLATE]
+                 [-N] [--no-rescale] [--threshold THRESHOLD] [-v] [-g]
+                 [-q] [-Q] [-s MAX-SEEDS] [--merge-regions]
+                 [--correct-regions] [--wrap-addition WRAP-ADDITION]
                  [--temporal-uncertain-unwrapping] [--version] [-h]
 
 optional arguments:
@@ -93,8 +103,8 @@ optional arguments:
                         as e.g. "-t epi 5.3" (for B0 calculation).
   -k, --mask MASK [MASK...]
                         nomask | qualitymask <threshold> | robustmask
-                        | <mask_file>. <threshold> for qualitymask in
-                        [0;1] (default: ["robustmask"])
+                        | <mask_file>. <threshold>=0.1 for qualitymask
+                        in [0;1] (default: ["robustmask"])
   -u, --mask-unwrapped  Apply the mask on the unwrapped result. If
                         mask is "nomask", sets it to "robustmask".
   -e, --unwrap-echoes UNWRAP-ECHOES [UNWRAP-ECHOES...]
@@ -109,18 +119,32 @@ optional arguments:
                         (2)phasegradientcoherence (3)phaselinearity
                         (4)magcoherence (5)magweight (6)magweight2
                         (default: "romeo")
-  -B, --compute-B0      Calculate combined B0 map in [Hz]. Phase
-                        offset correction might be necessary if not
-                        coil-combined with MCPC3Ds/ASPIRE.
-  --phase-offset-correction, --coil-combination [PHASE-OFFSET-CORRECTION]
+  -B, --compute-B0      Calculate combined B0 map in [Hz]. This
+                        activates MCPC3Ds phase offset correction
+                        (monopolar) for multi-echo data.
+  --phase-offset-correction [PHASE-OFFSET-CORRECTION]
                         on | off | bipolar. Applies the MCPC3Ds method
                         to perform phase offset determination and
-                        removal (for multi-echo). This option also
-                        allows 5D input, where the 5th dimension is
-                        channels. Coil combination will be performed.
-                        "bipolar" removes eddy current artefacts
-                        (requires >= 3 echoes). (default: "off",
-                        without arg: "on")
+                        removal (for multi-echo). "bipolar" removes
+                        eddy current artefacts (requires >= 3 echoes).
+                        (default: "off", without arg: "on")
+  --coil-combination [COIL-COMBINATION]
+                        on | off | bipolar. Applies MCPC3Ds to perform
+                        coil combination (for multi-echo). This option
+                        requires the echoes as 4th dimension and the
+                        channels as 5th dimension. "bipolar" removes
+                        eddy current artefacts (requires >= 3 echoes).
+                        This option overwrites the
+                        --phase-offset-correction setting. (default:
+                        "off", without arg: "on")
+  --phase-offset-smoothing-sigma-mm PHASE-OFFSET-SMOOTHING-SIGMA-MM [PHASE-OFFSET-SMOOTHING-SIGMA-MM...]
+                        default: [7,7,7]    Only applied if
+                        phase-offset-correction is activated. The
+                        given    sigma size is divided by the voxel
+                        size from the nifti phase    file to obtain a
+                        smoothing size in voxels. A value of [0,0,0]
+                        deactivates phase offset smoothing (not
+                        recommended).
   --write-phase-offsets
                         Saves the estimated phase offsets to the
                         output folder
@@ -131,7 +155,7 @@ optional arguments:
                         phase-offset-correction is not applicable.
   --template TEMPLATE   Template echo that is spatially unwrapped and
                         used for temporal unwrapping (type: Int64,
-                        default: 2)
+                        default: 1)
   -N, --no-mmap         Deactivate memory mapping. Memory mapping
                         might cause problems on network storage
   --no-rescale          Deactivate rescaling of input images. By
