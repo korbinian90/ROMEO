@@ -75,15 +75,14 @@ For proper handling, the phase offsest can be removed using `MCPC-3D-S` with the
 
 ## Help on arguments:
 ```
+$ ./bin/romeo
 
-$ romeo
 usage: <PROGRAM> [-p PHASE] [-m MAGNITUDE] [-o OUTPUT]
                  [-t ECHO-TIMES [ECHO-TIMES...]] [-k MASK [MASK...]]
                  [-u] [-e UNWRAP-ECHOES [UNWRAP-ECHOES...]]
                  [-w WEIGHTS] [-B]
                  [--phase-offset-correction [PHASE-OFFSET-CORRECTION]]
-                 [--coil-combination [COIL-COMBINATION]]
-                 [--phase-offset-smoothing-sigma-mm PHASE-OFFSET-SMOOTHING-SIGMA-MM [PHASE-OFFSET-SMOOTHING-SIGMA-MM...]]
+                                  [--phase-offset-smoothing-sigma-mm PHASE-OFFSET-SMOOTHING-SIGMA-MM [PHASE-OFFSET-SMOOTHING-SIGMA-MM...]]
                  [--write-phase-offsets] [-i] [--template TEMPLATE]
                  [-N] [--no-rescale] [--threshold THRESHOLD] [-v] [-g]
                  [-q] [-Q] [-s MAX-SEEDS] [--merge-regions]
@@ -131,20 +130,11 @@ optional arguments:
                         removal (for multi-echo). "bipolar" removes
                         eddy current artefacts (requires >= 3 echoes).
                         (default: "off", without arg: "on")
-  --coil-combination [COIL-COMBINATION]
-                        on | off | bipolar. Applies MCPC3Ds to perform
-                        coil combination (for multi-echo). This option
-                        requires the echoes as 4th dimension and the
-                        channels as 5th dimension. "bipolar" removes
-                        eddy current artefacts (requires >= 3 echoes).
-                        This option overwrites the
-                        --phase-offset-correction setting. (default:
-                        "off", without arg: "on")
   --phase-offset-smoothing-sigma-mm PHASE-OFFSET-SMOOTHING-SIGMA-MM [PHASE-OFFSET-SMOOTHING-SIGMA-MM...]
-                        default: [7,7,7]    Only applied if
+                        default: [7,7,7] Only applied if
                         phase-offset-correction is activated. The
-                        given    sigma size is divided by the voxel
-                        size from the nifti phase    file to obtain a
+                        given sigma size is divided by the voxel size
+                        from the nifti phase file to obtain a
                         smoothing size in voxels. A value of [0,0,0]
                         deactivates phase offset smoothing (not
                         recommended).
