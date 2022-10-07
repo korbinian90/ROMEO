@@ -21,8 +21,8 @@ Step by step explanation here: https://github.com/korbinian90/RomeoApp.jl
 ### Option 4: Compile ROMEO (every OS)
 Follow the steps in https://github.com/korbinian90/CompileMRI.jl
 
-### Option 5: Use within julia (every OS)
-https://github.com/korbinian90/ROMEO.jl
+### Option 5: Use the julia package [ROMEO.jl](https://github.com/korbinian90/ROMEO.jl) (every OS) 
+All the flexibility, but requires handling phase offsets and B0 calculation yourself (see [MriResearchTools.jl](https://github.com/korbinian90/MriResearchTools.jl))
 
 ## Publication
 **ROMEO**: Dymerska, B., Eckstein, K., Bachrata, B., Siow, B., Trattnig, S., Shmueli, K., Robinson, S.D., 2020. Phase Unwrapping with a Rapid Opensource Minimum Spanning TreE AlgOrithm (ROMEO). Magnetic Resonance in Medicine. https://doi.org/10.1002/mrm.28563
