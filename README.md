@@ -211,15 +211,26 @@ The binaries are a standalone compiled version of [RomeoApp.jl](https://github.c
 ### MacOS
 To run romeo executables on MacOS, multiple files have to be flagged as save to execute. Additionally, the executable might only run on specific OS versions. You can try the [newest](https://github.com/korbinian90/CompileMRI.jl/releases) MacOS executable, [v3.2.2](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.2) and [v3.1](https://github.com/korbinian90/ROMEO/releases/tag/v3.1). This problem is still unsolved and no clear way how to improve the compatibility
 
-### MATLAB `libstdc++` error
+### Issues when calling from MATLAB
+#### `libstdc++` error (libstdc++.so.6: version `GLIBCXX_3.4.29' not found)
 Problem: ROMEO crashes with version conflicts of `libstdc++` when called within MATLAB via `unix()` or `system()`.  
 Reason: The `libstdc++` library is already loaded in MATLAB, which causes a conflict if the version is older than what ROMEO expects.  
 Solution: Use `LD_PRELOAD` to specify the newer `libstdc++` version before running matlab  
 Example:  
 ```bash
-$ export LD_PRELOAD=/<path-to-romeo>/mritools_Linux_3.3.5/lib/julia/libstc++.so.6.0.29
+$ export LD_PRELOAD=/<path-to-romeo>/mritools_Linux_3.3.5/lib/julia/libstc++.so
 $ matlab
 ```
-
+#### Segmentation fault (error code 139)
+Problem: Similar to the above problem, matlab has already loaded an incompatible shared library.
+Solution:
+```bash
+$ export LD_PRELOAD=/<path-to-romeo>/mritools_Linux_3.3.5/lib/julia/libunwind.so
+$ matlab 
+```
+or for multiple preload libraries
+```bash
+$ export LD_PRELOAD="/<path-to-romeo>/mritools_Linux_3.3.5/lib/julia/libstc++.so /<path-to-romeo>/mritools_Linux_3.3.5/lib/julia/libunwind.so"
+```
 ## Feedback
 Feature requests and bug reports are welcome!
