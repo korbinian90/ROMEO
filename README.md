@@ -217,7 +217,7 @@ Reason: The `libstdc++` library is already loaded in MATLAB, which causes a conf
 Solution: Use `LD_PRELOAD` to specify the newer `libstdc++` version before running matlab  
 Example:  
 ```bash
-$ LD_PRELOAD=/<path-to-romeo>/mritools_Linux_3.3.5/lib/julia/libstc++.so.6.0.29
+$ export LD_PRELOAD=/<path-to-romeo>/mritools_Linux_3.3.5/lib/julia/libstc++.so.6.0.29
 $ matlab
 ```
 
