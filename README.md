@@ -209,7 +209,7 @@ The binaries are a standalone compiled version of [RomeoApp.jl](https://github.c
 ### v3.1
 - quality map output is corrupted. Fixed in v3.1.1
 ### MacOS
-To run romeo executables on MacOS, multiple files have to be flagged as save to execute. Additionally, the executable might only run on specific OS versions. You can try the [newest](https://github.com/korbinian90/CompileMRI.jl/releases) MacOS executable, [v3.2.2](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.2) and [v3.1](https://github.com/korbinian90/ROMEO/releases/tag/v3.1). This problem is still unsolved and no clear way how to improve the compatibility
+To run romeo executables on MacOS, multiple files have to be flagged as save to execute. Additionally, the executable might only run on specific OS versions. You can try the [newest](https://github.com/korbinian90/CompileMRI.jl/releases) MacOS executable, [v3.2.2](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.2) and [v3.1](https://github.com/korbinian90/ROMEO/releases/tag/v3.1). This problem is still unsolved and no clear way how to improve the compatibility. Please look at the different ways to run it on MacOS above.
 
 ### Issues when calling from MATLAB
 #### `libstdc++` error (libstdc++.so.6: version `GLIBCXX_3.4.29' not found)
