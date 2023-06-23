@@ -54,10 +54,6 @@ Example usage for a 3-echo scan with TE = [3,6,9] ms:
 
 Note that echo times are required for unwrapping multi-echo data.
 
-## Common Pitfalls
-### Phase Input
-The input data is automatically rescaled to [-π;π]. For example, the input data can be given from [0;4095], which is rescaled to the range [-π;π]. In case the data is already in radians, this can be deactivated using the flag `--no-rescale`. This might be necessary for phase difference data, where calculating the phase difference increases the range to [-2π;2π], but no rescaling to [-π;π] should occur.
-
 ## Different Use Cases
 ### Multi-Echo
 If multi-echo data is available, supplying ROMEO with multi-echo information should improve the unwrapping accuracy. The same is true for magnitude information.
@@ -81,6 +77,10 @@ For proper handling, the phase offsest can be removed using `MCPC-3D-S` with the
 For datasets with disconnected regions, the `--max-seeds`, `--correct-regions` and `--merge-regions` options might be of interest.
 
 The option `--max-seeds` creates multiple regions, which are unwrapped independently. The detected regions are written to the output file `regions.nii`.
+
+## Common Pitfalls
+### Phase Input
+The input data is automatically rescaled to [-π;π]. For example, the input data can be given from [0;4095], which is rescaled to the range [-π;π]. In case the data is already in radians, this can be deactivated using the flag `--no-rescale`. This might be necessary for phase difference data, where calculating the phase difference increases the range to [-2π;2π], but no rescaling to [-π;π] should occur.
 
 ## Help on arguments:
 ```
