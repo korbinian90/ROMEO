@@ -73,7 +73,7 @@ If the multi-echo data contains **large phase offsets** (phase at echo time zero
 
 For proper handling, the phase offsest can be removed using `MCPC-3D-S` with the option `phase-offset-correction`. This works for monopolar and bipolar data, already combined or uncombined channels. However, this requires "linear phase evolution". If the phase is already "corrupted" by other coil combination algorithms, it might not be possible to estimate and remove the phase offsets.
 
-### Disconected Regions
+### Disconnected Regions
 For datasets with disconnected regions, the `--max-seeds`, `--correct-regions` and `--merge-regions` options might be of interest.
 
 The option `--max-seeds` creates multiple regions, which are unwrapped independently. The detected regions are written to the output file `regions.nii`.
