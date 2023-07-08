@@ -59,7 +59,7 @@ Note that echo times are required for unwrapping multi-echo data.
 If multi-echo data is available, supplying ROMEO with multi-echo information should improve the unwrapping accuracy. The same is true for magnitude information.
 
 ### Coil Combination
-Coil combination will be automatically performed for 5D datasets using `MCPC-3D-S`. The echoes have to be in the 4th dimension and the channels in the 5th dimension. For bipolar datasets use `--phase-offset-correction bipolar` as additional argument (bipolar correction requires >= 3 echoes).
+Coil combination will be automatically performed for 5D datasets using **MCPC-3D-S**. The echoes have to be in the 4th dimension and the channels in the 5th dimension. For bipolar datasets use `--phase-offset-correction bipolar` as additional argument (bipolar correction requires >= 3 echoes).
 
 ### Repeated Measurements (EPI)
 4D data with an equal echo time for all volumes should be unwrapped as 4D for best accuracy and temporal stability. The echo times can be set to `-t epi`.
@@ -69,9 +69,9 @@ In certain cases, the phase of the first echo/time-point looks differently than 
 With the optional argument `--template 2`, this can be changed to the second (or any other) echo/time-point.
 
 ### Phase Offsets
-If the multi-echo data contains **large phase offsets** (phase at echo time zero), default template unwrapping might fail. Setting the `individual-unwrapping` flag is a solution, as it performs spatial unwrapping for each echo instead. The computed B0 map is not corrected for remaining phase offsets.
+If the multi-echo data contains *large phase offsets* (phase at echo time zero), default template unwrapping might fail. Setting the `--individual-unwrapping` flag is a solution, as it performs spatial unwrapping for each echo instead. The computed B0 map is not corrected for remaining phase offsets.
 
-For proper handling, the phase offsest can be removed using `MCPC-3D-S` with the option `phase-offset-correction`. This works for monopolar and bipolar data, already combined or uncombined channels. However, this requires "linear phase evolution". If the phase is already "corrupted" by other coil combination algorithms, it might not be possible to estimate and remove the phase offsets.
+For proper handling, the phase offsest can be removed using **MCPC-3D-S** with the option `--phase-offset-correction`. This works for monopolar and bipolar data, already combined or uncombined channels. However, this requires "linear phase evolution". If the phase is already "corrupted" by other coil combination algorithms, it might not be possible to estimate and remove the phase offsets.
 
 ### Disconnected Regions
 For datasets with disconnected regions, the `--max-seeds`, `--correct-regions` and `--merge-regions` options might be of interest.
