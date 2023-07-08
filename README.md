@@ -81,7 +81,7 @@ The option `--max-seeds` creates multiple regions, which are unwrapped independe
 ### Fat and Water - Multi-Echo
 For acquisitions, in which fat and water signals mix, the assumption of *linear phase evolution* might be broken. Both temporal unwrapping and MCPC-3D-S phase offset removal depend on linear phase evolution and might produce incorrect results, leading to multi-echo unwrapping problems and remaining phase offsets in the resulting B0 map.
 
-Using the --individual-unwrapping flag might improve the unwrapping performance by disabling temporal unwrapping. Still, a calculated B0 map might contain unwanted phase offsets.
+Using the `--individual-unwrapping` flag might improve the unwrapping performance by disabling temporal unwrapping. Still, a calculated B0 map might contain unwanted phase offsets.
 
 ## Common Pitfalls
 ### Phase Input
