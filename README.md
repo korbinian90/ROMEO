@@ -78,6 +78,11 @@ For datasets with disconnected regions, the `--max-seeds`, `--correct-regions` a
 
 The option `--max-seeds` creates multiple regions, which are unwrapped independently. The detected regions are written to the output file `regions.nii`.
 
+### Fat and Water - Multi-Echo
+For acquisitions, in which fat and water signals mix, the assumption of *linear phase evolution* might be broken. Both temporal unwrapping and MCPC-3D-S phase offset removal depend on linear phase evolution and might produce incorrect results, leading to multi-echo unwrapping problems and remaining phase offsets in the resulting B0 map.
+
+Using the --individual-unwrapping flag might improve the unwrapping performance by disabling temporal unwrapping. Still, a calculated B0 map might contain unwanted phase offsets.
+
 ## Common Pitfalls
 ### Phase Input
 The input data is automatically rescaled to [-π;π]. For example, the input data can be given from [0;4095], which is rescaled to the range [-π;π]. In case the data is already in radians, this can be deactivated using the flag `--no-rescale`. This might be necessary for phase difference data, where calculating the phase difference increases the range to [-2π;2π], but no rescaling to [-π;π] should occur.
