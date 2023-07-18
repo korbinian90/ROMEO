@@ -232,19 +232,19 @@ Reason: The `libstdc++` library is already loaded in MATLAB, which causes a conf
 Solution: Use `LD_PRELOAD` to specify the newer `libstdc++` version before running matlab  
 Example:  
 ```bash
-$ export LD_PRELOAD=/<path-to-romeo>/mritools_Linux_3.3.5/lib/julia/libstdc++.so
+$ export LD_PRELOAD=/<path-to-romeo>/mritools_Linux_x.x.x/lib/julia/libstdc++.so
 $ matlab
 ```
 #### Segmentation fault (error code 139)
 Problem: Similar to the above problem, matlab has already loaded an incompatible shared library.
 Solution:
 ```bash
-$ export LD_PRELOAD=/<path-to-romeo>/mritools_Linux_3.3.5/lib/julia/libunwind.so
+$ export LD_PRELOAD=/<path-to-romeo>/mritools_Linux_x.x.x/lib/julia/libunwind.so
 $ matlab 
 ```
 or for multiple preload libraries
 ```bash
-$ export LD_PRELOAD="/<path-to-romeo>/mritools_Linux_3.3.5/lib/julia/libstdc++.so /<path-to-romeo>/mritools_Linux_3.3.5/lib/julia/libunwind.so"
+$ export LD_PRELOAD="/<path-to-romeo>/mritools_Linux_x.x.x/lib/julia/libstdc++.so /<path-to-romeo>/mritools_Linux_x.x.x/lib/julia/libunwind.so"
 ```
 ## Feedback
 Feature requests and bug reports are welcome!
