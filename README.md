@@ -226,26 +226,22 @@ The binaries are a standalone compiled version of [RomeoApp.jl](https://github.c
 ### MacOS
 To run romeo executables on MacOS, multiple files have to be flagged as save to execute. Additionally, the executable might only run on specific OS versions. You can try the [newest](https://github.com/korbinian90/CompileMRI.jl/releases) MacOS executable, [v3.2.2](https://github.com/korbinian90/ROMEO/releases/tag/v3.2.2) and [v3.1](https://github.com/korbinian90/ROMEO/releases/tag/v3.1). This problem is still unsolved and no clear way how to improve the compatibility. Please look at the different ways to run it on MacOS above.
 
-### Issues when calling from MATLAB
-#### `libstdc++` error (libstdc++.so.6: version `GLIBCXX_3.4.29' not found)
-Problem: ROMEO crashes with version conflicts of `libstdc++` when called within MATLAB via `unix()` or `system()`.  
-Reason: The `libstdc++` library is already loaded in MATLAB, which causes a conflict if the version is older than what ROMEO expects.  
-Solution: Use `LD_PRELOAD` to specify the newer `libstdc++` version before running matlab  
+### Issues when calling from MATLAB  
+
+- `libstdc++` error (libstdc++.so.6: version `GLIBCXX_3.4.29' not found)  
+- Segmentation fault (error code 139)  
+
+Problem: ROMEO crashes with version conflicts of shared dependencies when called within MATLAB via `unix()` or `system()`.  
+Reason: MATLAB runs other programs with a [modified environment variable](https://discourse.julialang.org/t/ann-juliafrommatlab-jl-call-julia-from-matlab/66882/2)  
+Solution: clean LD_LIBRARY_PATH before execution and restore it afterwards  
 Example:  
-```bash
-$ export LD_PRELOAD=/<path-to-romeo>/mritools_Linux_x.x.x/lib/julia/libstdc++.so
-$ matlab
+```matlab
+% remove matlab specific LD_LIBRARY_PATH
+if isunix; paths = getenv('LD_LIBRARY_PATH'); setenv('LD_LIBRARY_PATH'); end
+success = system(<romeo call>);
+% restore paths
+if isunix; setenv('LD_LIBRARY_PATH', paths); end
 ```
-#### Segmentation fault (error code 139)
-Problem: Similar to the above problem, matlab has already loaded an incompatible shared library.
-Solution:
-```bash
-$ export LD_PRELOAD=/<path-to-romeo>/mritools_Linux_x.x.x/lib/julia/libunwind.so
-$ matlab 
-```
-or for multiple preload libraries
-```bash
-$ export LD_PRELOAD="/<path-to-romeo>/mritools_Linux_x.x.x/lib/julia/libstdc++.so /<path-to-romeo>/mritools_Linux_x.x.x/lib/julia/libunwind.so"
-```
+
 ## Feedback
 Feature requests and bug reports are welcome!
