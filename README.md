@@ -9,7 +9,7 @@ Ordered from simple to more involved approaches.
 ### Option 1: [Download standalone executable within mritools (Linux and Windows)](https://github.com/korbinian90/CompileMRI.jl/releases)
 **Download link for mritools as plain text: https://github.com/korbinian90/CompileMRI.jl/releases**  
 *Note: It might not work on every Linux distribution due to shared library incompatibilities (https://github.com/korbinian90/ROMEO/issues/16)*  
-*If a compiled MacOS version is required, see [Known-issues/MacOS](https://github.com/korbinian90/ROMEO#macos), but the suggested way is Option 4*
+*If a compiled MacOS version is required, see [Known-issues/MacOS](https://github.com/korbinian90/ROMEO#macos), but the suggested way is Option 2*
 
 ### Option 2: [Julia command line usage](https://github.com/korbinian90/ROMEO.jl#usage---command-line) (every OS)
 Identical usage to the standalone version with better compatibility.  
