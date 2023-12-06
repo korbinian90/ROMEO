@@ -11,19 +11,19 @@ Ordered from simple to more involved approaches.
 *Note: It might not work on every Linux distribution due to shared library incompatibilities (https://github.com/korbinian90/ROMEO/issues/16)*  
 *If a compiled MacOS version is required, see [Known-issues/MacOS](https://github.com/korbinian90/ROMEO#macos), but the suggested way is Option 4*
 
-### Option 2: Run in [Neurodesk](https://neurodesk.github.io/) (every OS)
+### Option 2: [Julia command line usage](https://github.com/korbinian90/ROMEO.jl#usage---command-line) (every OS)
+Identical usage to the standalone version with better compatibility.  
+
+### Option 3: Run in [Neurodesk](https://neurodesk.github.io/) (every OS)
 Neurodesk is an analysis environment for reproducible neuroimaging running in a docker container.
 It comes with a range of useful tools preinstalled, including ROMEO.
 (https://neurodesk.github.io/)
 
-### Option 3: Use the julia command line caller (every OS)
-Step by step explanation here: https://github.com/korbinian90/RomeoApp.jl
-
-### Option 4: Compile ROMEO (every OS)
-Follow the steps in https://github.com/korbinian90/CompileMRI.jl
-
-### Option 5: Use the julia package [ROMEO.jl](https://github.com/korbinian90/ROMEO.jl) (every OS) 
+### Option 4: Use the julia package [ROMEO.jl](https://github.com/korbinian90/ROMEO.jl) (every OS) 
 All the flexibility, but requires handling phase offsets and B0 calculation yourself (see [MriResearchTools.jl](https://github.com/korbinian90/MriResearchTools.jl))
+
+### Option 5: Compile ROMEO (every OS)
+Follow the steps in https://github.com/korbinian90/CompileMRI.jl
 
 ## Publication
 **ROMEO**: Dymerska, B., Eckstein, K., Bachrata, B., Siow, B., Trattnig, S., Shmueli, K., Robinson, S.D., 2020. Phase Unwrapping with a Rapid Opensource Minimum Spanning TreE AlgOrithm (ROMEO). Magnetic Resonance in Medicine. https://doi.org/10.1002/mrm.28563
