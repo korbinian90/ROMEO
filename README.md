@@ -13,6 +13,8 @@ Ordered from simple to more involved approaches.
 
 ### Option 2: [Julia command line usage](https://github.com/korbinian90/ROMEO.jl#usage---command-line) (every OS)
 Identical usage to the standalone version with better compatibility.  
+1. Install julia
+2. Run [romeo.jl](https://github.com/korbinian90/ROMEO.jl/blob/master/romeo.jl) command line script
 
 ### Option 3: Run in [Neurodesk](https://neurodesk.github.io/) (every OS)
 Neurodesk is an analysis environment for reproducible neuroimaging running in a docker container.
