@@ -59,7 +59,7 @@ Note that echo times are required for unwrapping multi-echo data.
 
 ## Different Use Cases
 ### Multi-Echo
-If multi-echo data is available, supplying ROMEO with multi-echo information should improve the unwrapping accuracy. The same is true for magnitude information.
+If multi-echo data is available, supplying ROMEO with multi-echo information should improve the unwrapping accuracy. The same is true for magnitude information. To calculate a B0 map in Hz, the echo time needs to be given in ms.
 
 ### Coil Combination
 Coil combination will be automatically performed for 5D datasets using **MCPC-3D-S**. The echoes have to be in the 4th dimension and the channels in the 5th dimension. For bipolar datasets use `--phase-offset-correction bipolar` as additional argument (bipolar correction requires >= 3 echoes).
@@ -97,14 +97,17 @@ $ ./bin/romeo
 usage: <PROGRAM> [-p PHASE] [-m MAGNITUDE] [-o OUTPUT]
                  [-t ECHO-TIMES [ECHO-TIMES...]] [-k MASK [MASK...]]
                  [-u] [-e UNWRAP-ECHOES [UNWRAP-ECHOES...]]
-                 [-w WEIGHTS] [-B]
+                 [-w WEIGHTS] [-B [COMPUTE-B0]]
+                 [--B0-phase-weighting B0-PHASE-WEIGHTING]
                  [--phase-offset-correction [PHASE-OFFSET-CORRECTION]]
-                                  [--phase-offset-smoothing-sigma-mm PHASE-OFFSET-SMOOTHING-SIGMA-MM [PHASE-OFFSET-SMOOTHING-SIGMA-MM...]]
+                 [--phase-offset-smoothing-sigma-mm PHASE-OFFSET-SMOOTHING-SIGMA-MM [PHASE-OFFSET-SMOOTHING-SIGMA-MM...]]
                  [--write-phase-offsets] [-i] [--template TEMPLATE]
-                 [-N] [--no-rescale] [--threshold THRESHOLD] [-v] [-g]
-                 [-q] [-Q] [-s MAX-SEEDS] [--merge-regions]
-                 [--correct-regions] [--wrap-addition WRAP-ADDITION]
-                 [--temporal-uncertain-unwrapping] [--version] [-h]
+                 [-N] [--no-phase-rescale] [--fix-ge-phase]
+                 [--threshold THRESHOLD] [-v] [-g] [-q] [-Q]
+                 [-s MAX-SEEDS] [--merge-regions] [--correct-regions]
+                 [--wrap-addition WRAP-ADDITION]
+                 [--temporal-uncertain-unwrapping [TEMPORAL-UNCERTAIN-UNWRAPPING]]
+                 [--version] [-h]
 
 optional arguments:
   -p, --phase PHASE     The phase image that should be unwrapped
@@ -114,7 +117,7 @@ optional arguments:
   -o, --output OUTPUT   The output path or filename (default:
                         "unwrapped.nii")
   -t, --echo-times ECHO-TIMES [ECHO-TIMES...]
-                        The echo times required for temporal
+                        The echo times in [ms] required for temporal
                         unwrapping specified in array or range syntax
                         (eg. "[1.5,3.0]" or "3.5:3.5:14"). For
                         identical echo times, "-t epi" can be used
@@ -123,12 +126,12 @@ optional arguments:
   -k, --mask MASK [MASK...]
                         nomask | qualitymask <threshold> | robustmask
                         | <mask_file>. <threshold>=0.1 for qualitymask
-                        in [0;1] (default: ["robustmask"])
+                        in [0;1] (default: Any["robustmask"])
   -u, --mask-unwrapped  Apply the mask on the unwrapped result. If
                         mask is "nomask", sets it to "robustmask".
   -e, --unwrap-echoes UNWRAP-ECHOES [UNWRAP-ECHOES...]
                         Load only the specified echoes from disk
-                        (default: [":"])
+                        (default: Any[":"])
   -w, --weights WEIGHTS
                         romeo | romeo2 | romeo3 | romeo4 | romeo6 |
                         bestpath | <4d-weights-file> | <flags>.
@@ -138,15 +141,22 @@ optional arguments:
                         (2)phasegradientcoherence (3)phaselinearity
                         (4)magcoherence (5)magweight (6)magweight2
                         (default: "romeo")
-  -B, --compute-B0      Calculate combined B0 map in [Hz]. This
+  -B, --compute-B0 [COMPUTE-B0]
+                        Calculate combined B0 map in [Hz]. Supports
+                        the B0 output filename as optional input. This
                         activates MCPC3Ds phase offset correction
-                        (monopolar) for multi-echo data.
+                        (monopolar) for multi-echo data. (default: "",
+                        without arg: "B0")
+  --B0-phase-weighting B0-PHASE-WEIGHTING
+                        phase_snr | phase_var | average | TEs | mag |
+                        simulated_mag Set the weighting for the B0
+                        calculation. (default: "phase_snr")
   --phase-offset-correction [PHASE-OFFSET-CORRECTION]
                         on | off | bipolar. Applies the MCPC3Ds method
                         to perform phase offset determination and
                         removal (for multi-echo). "bipolar" removes
                         eddy current artefacts (requires >= 3 echoes).
-                        (default: "off", without arg: "on")
+                        (default: "default off", without arg: "on")
   --phase-offset-smoothing-sigma-mm PHASE-OFFSET-SMOOTHING-SIGMA-MM [PHASE-OFFSET-SMOOTHING-SIGMA-MM...]
                         default: [7,7,7] Only applied if
                         phase-offset-correction is activated. The
@@ -168,11 +178,14 @@ optional arguments:
                         default: 1)
   -N, --no-mmap         Deactivate memory mapping. Memory mapping
                         might cause problems on network storage
-  --no-rescale          Deactivate rescaling of input images. By
+  --no-phase-rescale, --no-rescale
+                        Deactivate rescaling of input images. By
                         default the input phase is rescaled to the
                         range [-π;π]. This option allows inputting
                         already unwrapped phase images without
                         manually wrapping them first.
+  --fix-ge-phase        GE systems write corrupted phase output (slice
+                        jumps). This option fixes the phase problems.
   --threshold THRESHOLD
                         <maximum number of wraps>. Threshold the
                         unwrapped phase to the maximum number of wraps
@@ -182,7 +195,9 @@ optional arguments:
   -g, --correct-global  Phase is corrected to remove global n2π phase
                         offset. The median of phase values (inside
                         mask if given) is used to calculate the
-                        correction term
+                        correction term. This also corrects multi-echo
+                        phase for individual unwrapping, and might
+                        require MCPC3Ds phase offset correction.
   -q, --write-quality   Writes out the ROMEO quality map as a 3D image
                         with one value per voxel
   -Q, --write-quality-all
@@ -205,10 +220,13 @@ optional arguments:
                         unwrapping' of 3 voxels in a line. Neighbors
                         can have (π + wrap-addition) phase difference.
                         (type: Float64, default: 0.0)
-  --temporal-uncertain-unwrapping
+  --temporal-uncertain-unwrapping [TEMPORAL-UNCERTAIN-UNWRAPPING]
                         EXPERIMENTAL! Uses spatial unwrapping on
-                        voxels that have high uncertainty values after
-                        temporal unwrapping.
+                        voxels that have low quality values after
+                        temporal unwrapping. A higher threshold leads
+                        to more voxels being spatially unwrapped. The
+                        range of the threshold is [0;1] (type:
+                        Float64, default: 0.0, without arg: 0.5)
   --version             show version information and exit
   -h, --help            show this help message and exit
 ```
