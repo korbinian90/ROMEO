@@ -194,9 +194,6 @@ So `--individual-unwrapping` is not reproducible run-to-run under multithreading
 is sequential and therefore deterministic; its comment notes that the oracle pins
 `JULIA_NUM_THREADS=1`, which is presumably why this was never noticed.
 
-Fix: build the keyword arguments per iteration instead of mutating a shared `Dict`, and take the
-`phase2` copy before the threaded loop.
-
 **Scope, measured.** Four runs of each path on the 3-echo volume, `JULIA_NUM_THREADS=4`, counting
 in-mask voxels that differ from run 1 (85 626 in-mask voxels):
 
@@ -255,8 +252,17 @@ unwrapping leaves an arbitrary 2π constant per echo, which the two-parameter fi
 scale, the default temporal unwrapping on the same data gives a median residual of 0.0354 rad. That
 is a property of `individual`, not of the race.)
 
-Fix: build the keyword arguments per iteration instead of mutating a shared `Dict`, and take the
-`phase2` copy before the threaded loop.
+**Fixed** in [ROMEO.jl#17](https://github.com/korbinian90/ROMEO.jl/pull/17): keyword arguments are
+built per iteration, and the reference echoes are snapshotted before the threaded loop. All four
+paths in the table above are deterministic afterwards over six runs at four threads, and the suite
+passes 192/192.
+
+The snapshot also makes `phase2` the wrapped phase for every echo — which is what `unwrap!` (4D) and
+`voxelquality` already pass, and what `seedcorrection!`'s `off2 ∈ -1:1` search assumes. That is a
+behaviour change: against the old single-threaded output, 830 of 256 878 in-mask voxel-echoes differ
+(0.32 %), with the fit residual unchanged (median 2.5463 → 2.5462 rad, voxels above 1 rad 77 323 →
+77 302). niimath's `-i` reproduces the old behaviour deliberately, so its individual-unwrapping
+parity will need the same update.
 
 ### 4.2 `wrap_addition` changes arithmetic width between the library and the CLI
 
@@ -285,9 +291,8 @@ different integer when the difference sits within ~1 Float32 ULP of an odd multi
 narrow enough that real phase data does not hit it.
 
 **Fixed** in `60d83fb..adb695a`: the signature default is now `0.0`. Verified test-neutral — the
-data-backed testsets give 89 passed / 2 errored both with and without the change (the two errors are
-at `test/mri.jl:74` and pre-date it), and the numerical core (`Features` 45, `Special Cases` 26,
-`Unwrap 1D/2D/3D` 28) passes with the change applied.
+data-backed testsets behave identically with and without the change, and the full suite
+(`features`, `specialcases`, `dsp_tests`, `mri`, `voxelquality`) passes 192/192.
 
 It does mean niimath is bit-parity with the **CLI** path specifically — its `wrap_addition` is a C
 `double` fixed at `0.0` — which is the right target for a CLI port.
