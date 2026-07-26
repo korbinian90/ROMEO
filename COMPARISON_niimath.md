@@ -168,9 +168,9 @@ at least one finite in-mask voxel they are identical.
 
 ---
 
-## 4. Two findings in ROMEO.jl itself
+## 4. Three findings in ROMEO.jl itself
 
-Working through the port surfaced two things on our side that are worth a look independently of
+Working through the port surfaced three things on our side that are worth a look independently of
 niimath.
 
 ### 4.1 `unwrap_individual!` has a data race
@@ -247,6 +247,31 @@ narrow enough that real phase data does not hit it. Worth tidying (make the sign
 It does mean niimath is bit-parity with the **CLI** path specifically — its `wrap_addition` is a C
 `double` fixed at `0.0` — which is the right target for a CLI port.
 
+### 4.3 The "phase first without `-p`" convenience breaks on any hyphenated filename
+
+`ext/RomeoApp/argparse.jl`:
+
+```julia
+if !('-' in args[1]) prepend!(args, Ref("-p")) end   # if phase is first without -p
+```
+
+`'-' in args[1]` tests whether the string *contains* a hyphen anywhere, not whether it *starts* with
+one. So the convenience only fires for a path with no hyphen at all — and BIDS filenames are built
+out of hyphens (`sub-01_echo-1_part-phase_bold.nii.gz`). The bare positional then reaches ArgParse,
+which rejects it with "too many arguments" and a usage dump.
+
+Demonstrated in one directory, same data, only the filename differing:
+
+```
+$ romeo.jl plain.nii.gz -m mag.nii.gz -t 16.8 -o outA                 # works, outA written
+$ romeo.jl sub-01_part-phase.nii.gz -m mag.nii.gz -t 16.8 -o outB     # usage error, no output
+```
+
+The same `'-' in ...` test is used for the "phase is last without `-p`" branch on the line below.
+I hit this by accident writing the benchmark above — the *directory* contained a hyphen, which is
+enough. Worth fixing to `startswith(args[1], '-')`, especially now that MEDIC is bringing BIDS-named
+data to ROMEO.
+
 ---
 
 ## 5. Verification
@@ -307,18 +332,47 @@ niimath  phase.nii -romeo mag.nii -t [16.8,38.56] t.nii
 | unwrapped phase (531 392 voxels) | 0.000000e+00 | 0 |
 | `mask` (265 696 voxels) | 0.000000e+00 | 0 |
 
-### 5.3 Cost, on this volume
+### 5.3 Cost, on this volume, with JIT excluded
 
-| | wall |
+Timing Julia against a compiled binary is only meaningful if compilation is kept out. Both sides
+here run the **same full pipeline** — read, `readphase` rescale, `robustmask`, weights, unwrap,
+write uncompressed NIfTI. On the Julia side `unwrapping_main` (the entry point `romeo.jl` calls) is
+invoked once to force compilation and then timed over five further calls in the same session; on the
+C side each run is a fresh process, so process startup is charged to niimath, not hidden. Four
+cores, `JULIA_NUM_THREADS=4` / `OMP_NUM_THREADS=4`, `-gz 0` on both sides.
+
+| case | ROMEO.jl warm, median (min) | niimath, median (min) | ratio (median) |
+| --- | --- | --- | --- |
+| single-echo | 121.3 ms (112.5) | 104.7 ms (101.1) | 1.16× |
+| multi-echo, 2 echoes | 146.5 ms (120.9) | 99.0 ms (97.2) | 1.48× |
+| multi-echo + `-B`, offset correction **off** | 130.1 ms (127.7) | 103.0 ms (100.4) | 1.26× |
+| multi-echo + `-B`, MCPC-3D-S on (ROMEO default) | 547.3 ms (505.1) | — not implemented | — |
+
+**Once JIT is excluded the two are within 1.2–1.5× of each other.** The C is faster, but modestly
+so — this is a well-optimised Julia implementation, and the gap is what one expects from removing a
+managed runtime, not an algorithmic difference.
+
+The fourth row is the one to read carefully. ROMEO's `-B` silently switches phase-offset correction
+to monopolar MCPC-3D-S (`caller.jl:82-84`), which niimath does not implement at all. Comparing that
+row against niimath's `-B` would be comparing 4.2× more work against less work and calling it
+slowness. The third row is the like-for-like `-B` comparison.
+
+For reference, the cold `romeo.jl` CLI from source is **36.9 s** end to end on this box. That is
+Julia startup and JIT, not the algorithm — the compiled `mritools` binary avoids it — but it is what
+a user invoking the script once actually waits for, and it is the single largest practical
+difference between the two tools.
+
+### 5.4 Memory
+
+| | peak RSS |
 | --- | --- |
-| `niimath -romeo`, multi-echo, incl. I/O and mask | 107 / 118 / 109 ms |
-| ROMEO.jl `unwrap!`, in-memory, warm (JIT excluded) | 122 / 217 / 266 ms |
-| `romeo.jl` CLI end-to-end, from source | 36.9 s |
+| `niimath -romeo` (largest child, `RUSAGE_CHILDREN`) | 0.015 GB |
+| Julia process running `unwrapping_main` (`Sys.maxrss`) | 0.95 GB |
 
-The 37 s is Julia startup and JIT, not the algorithm — the compiled `mritools` binary avoids it, and
-this box has only 4 cores. The like-for-like number is the middle row: the C is roughly 1.5–2×
-faster than warm Julia on the same work, which is an ordinary and unsurprising margin. The large
-figures in the email belong to the MEDIC comparison, not to ROMEO.
+The ~60× gap is almost entirely the Julia runtime and the loaded package stack, not ROMEO's working
+set — the data here is only a few MB. It is still a real cost to a user, and it is the one point
+from the email's list that applies to us rather than only to warpkit. A `PackageCompiler` sysimage
+reduces the startup cost but not this floor.
 
 ---
 
@@ -334,9 +388,13 @@ The port is careful, honest about its limits, and correctly attributed. Concrete
   approximated.
 - The one behavioural difference a user is likely to hit is multi-echo `-B` without MCPC-3D-S.
 
-The honest framing for the wider claim in the email: the 32–40× figure is an end-to-end MEDIC
-number dominated by the *apply* stage, where `wk-apply-warp` has no thread option. `medic_bench`'s
-own README is clearer than the email — the estimate stage, which is the like-for-like comparison, is
-4.2–4.6× at roughly half the RAM, and the README states plainly that end to end the two do not yet
-match. None of that is a criticism of the ROMEO port, which is a separate and much stronger claim:
-there, "equivalent" means bit-identical, and it is checked.
+On cost: with JIT excluded, ROMEO.jl is within 1.2–1.5× of the C on the same pipeline. The honest
+gaps are cold start (36.9 s from source) and the ~0.95 GB Julia runtime floor — both real for users,
+neither algorithmic.
+
+The framing for the wider claim in the email: the 32–40× figure is an end-to-end MEDIC number
+dominated by the *apply* stage, where `wk-apply-warp` has no thread option. `medic_bench`'s own
+README is clearer than the email — the estimate stage, the like-for-like comparison, is 4.2–4.6× at
+roughly half the RAM, and the README states plainly that end to end the two do not yet match. None
+of that is a criticism of the ROMEO port, which is a separate and much stronger claim: there,
+"equivalent" means bit-identical, and it is checked.
