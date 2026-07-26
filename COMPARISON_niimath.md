@@ -197,6 +197,26 @@ is sequential and therefore deterministic; its comment notes that the oracle pin
 Fix: build the keyword arguments per iteration instead of mutating a shared `Dict`, and take the
 `phase2` copy before the threaded loop.
 
+**Scope, measured.** Four runs of each path on the 3-echo volume, `JULIA_NUM_THREADS=4`, counting
+in-mask voxels that differ from run 1 (85 626 in-mask voxels):
+
+| path | differing voxels across runs | max \|diff\| |
+| --- | --- | --- |
+| temporal (the default) | 0, 0, 0, 0 | 0 |
+| `individual` **without** a magnitude | 0, 0, 0, 0 | 0 |
+| `individual` with a magnitude | 0, 1088, 4018, 4862 | 37.7 rad (6 wraps) |
+| `individual` + `correctglobal` | 0, 0, 11795, 12413 | 44.0 rad (7 wraps) |
+
+That isolates the mechanism. The default path is unaffected — its only `Threads.@threads` is in
+`calculateweights` over `dim in 1:3`, which writes disjoint slices of a preallocated array and is
+benign. Dropping the magnitude also makes `individual` deterministic, which points at the
+`args[:mag]` write specifically: it is the only statement that mutates the shared `Dict`, and it
+only executes when a magnitude is present. The `phase2` slice read is a real race too, but it did
+not manifest here — all three tasks take their copy before any of them has written much.
+
+`--correct-global` does not rescue it. `correct_multi_echo_wraps!` estimates one 2π offset per echo
+from the median, and it is computing that median from already-racily-unwrapped echoes.
+
 Measured on the 76×76×46×2 validation volume with `JULIA_NUM_THREADS=4`, six identical calls to
 `unwrap(phase; TEs, mag, mask, individual=true)`:
 
@@ -213,6 +233,27 @@ Measured on the 76×76×46×2 validation volume with `JULIA_NUM_THREADS=4`, six 
 With `JULIA_NUM_THREADS=1` all six runs are identical. So this is the threading, not the data: up to
 89 481 voxels — 17 % of the volume — land on a different 2π branch between two runs of the same
 call, with excursions up to 56.5 rad (nine wraps).
+
+**Does it cost quality, or is it only non-determinism?** Both, and the distinction matters:
+
+- The differences are genuine wrap errors, not a cosmetic offset. Decomposing each run's difference
+  from run 1 into a per-echo global 2π offset plus a remainder, the global offsets are `[0,0,0]` and
+  the remainder is the entire difference — 12 801 / 12 565 / 11 795 in-mask voxels on the 3-echo
+  volume. Nothing a global correction can absorb.
+- But no run is systematically better. Scoring each run by the in-mask RMS residual of the
+  magnitude-weighted `φ = a + ω·TE` fit gives median 2.5454–2.5468 rad and p95 2.9400–2.9446 across
+  runs — indistinguishable. The tail moves a little (p99 4.22–4.46, max 12.0–13.6) with no
+  consistent winner.
+
+So the failure mode is not "threading corrupts an otherwise-correct answer". It is "the answer is
+drawn arbitrarily from a set of roughly equally-flawed answers, and you get a different draw each
+run". For a published pipeline that is still a real defect: the same command on the same data does
+not reproduce, and ~14 % of in-mask voxels sit on a different branch between draws.
+
+(The residual is high in absolute terms for every `individual` run because independent per-echo
+unwrapping leaves an arbitrary 2π constant per echo, which the two-parameter fit cannot absorb. For
+scale, the default temporal unwrapping on the same data gives a median residual of 0.0354 rad. That
+is a property of `individual`, not of the race.)
 
 Fix: build the keyword arguments per iteration instead of mutating a shared `Dict`, and take the
 `phase2` copy before the threaded loop.
@@ -241,8 +282,12 @@ different integer when the difference sits within ~1 Float32 ULP of an odd multi
 **Measured: it does not bite here.** Comparing `unwrap(...)` against
 `unwrap(...; wrap_addition=0.0)` on the validation volume gives **0 differing voxels out of
 531 392**. So this is a latent inconsistency in the source, not an observed defect — the window is
-narrow enough that real phase data does not hit it. Worth tidying (make the signature default
-`0.0`) rather than worth worrying about.
+narrow enough that real phase data does not hit it.
+
+**Fixed** in `60d83fb..adb695a`: the signature default is now `0.0`. Verified test-neutral — the
+data-backed testsets give 89 passed / 2 errored both with and without the change (the two errors are
+at `test/mri.jl:74` and pre-date it), and the numerical core (`Features` 45, `Special Cases` 26,
+`Unwrap 1D/2D/3D` 28) passes with the change applied.
 
 It does mean niimath is bit-parity with the **CLI** path specifically — its `wrap_addition` is a C
 `double` fixed at `0.0` — which is the right target for a CLI port.
@@ -332,7 +377,24 @@ niimath  phase.nii -romeo mag.nii -t [16.8,38.56] t.nii
 | unwrapped phase (531 392 voxels) | 0.000000e+00 | 0 |
 | `mask` (265 696 voxels) | 0.000000e+00 | 0 |
 
-### 5.3 Cost, on this volume, with JIT excluded
+### 5.3 Three echoes
+
+The parity suite's real cases are 1-echo (`e0`, `e1`, `e0n`) and 2-echo (`me`) — there is no 3-echo
+case. Built one from the `medic_bench` `echo3` sbref volumes (76×76×46, TEs 14.8 / 34.38 / 53.94 ms)
+and compared the two CLIs directly across ten option combinations:
+
+| case | result |
+| --- | --- |
+| default, `-template 2`, `-temporal-uncertain-unwrapping 0.5`, `-i`, `-g`, `-B`, `-k qualitymask`, `-k nomask`, `-w romeo2`, `-w romeo6` | max\|diff\| = 0.000e+00, 0 of 797 088 voxels differ, in every case |
+
+The B0 side outputs looked like a discrepancy at first (max\|diff\| 7.6e-6 Hz on the field map,
+1.8e-3 on the SNR) but are not one: **ROMEO writes B0 and B0_snr as Float64, niimath as Float32.**
+Rounding ROMEO's Float64 output to Float32 reproduces niimath's bytes exactly — 0 of 265 696 voxels
+differ, on both maps. The relative deviation before rounding is 2e-8 to 6e-8, i.e. below one Float32
+ULP. The parity suite never sees this because it compares Float32 raw dumps on both sides; only the
+saved NIfTI differs, in datatype.
+
+### 5.4 Cost, on this volume, with JIT excluded
 
 Timing Julia against a compiled binary is only meaningful if compilation is kept out. Both sides
 here run the **same full pipeline** — read, `readphase` rescale, `robustmask`, weights, unwrap,
