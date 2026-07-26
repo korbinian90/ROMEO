@@ -252,17 +252,29 @@ unwrapping leaves an arbitrary 2π constant per echo, which the two-parameter fi
 scale, the default temporal unwrapping on the same data gives a median residual of 0.0354 rad. That
 is a property of `individual`, not of the race.)
 
-**Fixed** in [ROMEO.jl#17](https://github.com/korbinian90/ROMEO.jl/pull/17): keyword arguments are
-built per iteration, and the reference echoes are snapshotted before the threaded loop. All four
-paths in the table above are deterministic afterwards over six runs at four threads, and the suite
-passes 192/192.
+**Fixed** in [ROMEO.jl#17](https://github.com/korbinian90/ROMEO.jl/pull/17) by running the echo loop
+sequentially. All four paths above are deterministic afterwards over six runs at four threads, the
+suite passes 192/192, and the output is bit-identical to what the current code produces
+single-threaded — verified against niimath on the 170-volume series, 0 of 45 168 320 voxels
+differing.
 
-The snapshot also makes `phase2` the wrapped phase for every echo — which is what `unwrap!` (4D) and
-`voxelquality` already pass, and what `seedcorrection!`'s `off2 ∈ -1:1` search assumes. That is a
-behaviour change: against the old single-threaded output, 830 of 256 878 in-mask voxel-echoes differ
-(0.32 %), with the fit residual unchanged (median 2.5463 → 2.5462 rad, voxels above 1 rad 77 323 →
-77 302). niimath's `-i` reproduces the old behaviour deliberately, so its individual-unwrapping
-parity will need the same update.
+I first tried keeping the threading and snapshotting `phase2` before the loop, on the theory that
+the wrapped reference was the intended semantics (it is what `unwrap!` (4D) and `voxelquality`
+pass). Measurement killed that: echo *i* referencing the **already unwrapped** echo *i-1* is
+load-bearing. With equal echo times `seedcorrection!` anchors each volume to the previous one's
+absolute phase, so the chain keeps the series consistent. Counting in-mask voxels that jump by more
+than π between consecutive volumes on the 170-volume EPI series:
+
+| variant | volume-to-volume \|Δφ\| > π |
+| --- | --- |
+| snapshotted (wrapped) reference | 27.2 % |
+| chained reference (current, kept) | 2.4 % |
+| temporal unwrapping, for scale | 0.0 % |
+
+So the order is part of the algorithm, and the only way to keep it deterministically is to give up
+the concurrency. Cost on that series: `-i` goes from 9.7–10.5 s to 10.8–12.4 s, with peak RSS
+dropping from 2.05 GB to 1.67 GB — small, because `calculateweights` still threads internally over
+`dim in 1:3` and now has the threads to itself.
 
 ### 4.2 `wrap_addition` changes arithmetic width between the library and the CLI
 
@@ -393,13 +405,32 @@ and compared the two CLIs directly across ten option combinations:
 | default, `-template 2`, `-temporal-uncertain-unwrapping 0.5`, `-i`, `-g`, `-B`, `-k qualitymask`, `-k nomask`, `-w romeo2`, `-w romeo6` | max\|diff\| = 0.000e+00, 0 of 797 088 voxels differ, in every case |
 
 The B0 side outputs looked like a discrepancy at first (max\|diff\| 7.6e-6 Hz on the field map,
-1.8e-3 on the SNR) but are not one: **ROMEO writes B0 and B0_snr as Float64, niimath as Float32.**
+1.8e-3 on the SNR) but are not one: **ROMEO writes B0 and B0_snr as Float64, niimath as Float32.** (Now aligned: [ROMEO.jl#18](https://github.com/korbinian90/ROMEO.jl/pull/18) makes ROMEO write Float32, after which the two agree byte-exactly.)
 Rounding ROMEO's Float64 output to Float32 reproduces niimath's bytes exactly — 0 of 265 696 voxels
 differ, on both maps. The relative deviation before rounding is 2e-8 to 6e-8, i.e. below one Float32
 ULP. The parity suite never sees this because it compares Float32 raw dumps on both sides; only the
 saved NIfTI differs, in datatype.
 
-### 5.4 Cost, on this volume, with JIT excluded
+### 5.4 A large dataset
+
+The 170-volume EPI series from `medic_bench` (76×76×46×170, 45 168 320 voxels, `-t epi`), four
+cores, uncompressed output on both sides:
+
+| workload | ROMEO.jl warm | niimath | ratio | peak RSS (jl / nii) |
+| --- | --- | --- | --- | --- |
+| `-t epi` (1 MST + temporal propagation) | 2.84 / 1.51 s | 1.30 / 1.23 / 1.21 s | ~1.25× | 1.44 / 0.59 GB |
+| `-t epi -i` (170 spatial MSTs) | 9.72 / 10.49 s | 4.48 / 4.40 s | **2.3×** | 2.05 / 0.59 GB |
+
+Output bit-identical in both cases — 0 of 45 168 320 voxels differ.
+
+The two rows measure different things and both are worth having. Plain `-t epi` runs the spanning
+tree once and propagates temporally, so it is dominated by I/O and elementwise work; the gap stays at
+the ~1.2–1.5× seen on small data. `-i` runs a full MST per volume and is the real stress test of the
+unwrapping core, and there the C is 2.3× faster — even though it processes echoes sequentially while
+ROMEO.jl threads across them. Memory is 2.4–3.5× lower and, unlike ROMEO.jl's, does not grow with the
+workload.
+
+### 5.5 Cost, on this volume, with JIT excluded
 
 Timing Julia against a compiled binary is only meaningful if compilation is kept out. Both sides
 here run the **same full pipeline** — read, `readphase` rescale, `robustmask`, weights, unwrap,
@@ -429,7 +460,7 @@ Julia startup and JIT, not the algorithm — the compiled `mritools` binary avoi
 a user invoking the script once actually waits for, and it is the single largest practical
 difference between the two tools.
 
-### 5.4 Memory
+### 5.6 Memory
 
 | | peak RSS |
 | --- | --- |
