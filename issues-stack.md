@@ -66,6 +66,18 @@ cycle as a side effect rather than as a package created for that one purpose.
 
 **Do the safe echo-time parser first** - see X2.
 
+**Write the entry points as `@main` modules, and give the CLI package an
+`[apps]` table.** Verified on Julia 1.12.7 here: `Pkg.Apps` installs a shim into
+`~/.julia/bin` that runs `julia --project=<apps env> -m <Module>`, so a Pkg app
+*is* a `@main` entry point. `juliac --trim` needs the same thing (X6). One
+refactor, two payoffs: `pkg> app add` as a zero-build delivery channel for
+anyone who already has Julia, and the entry point static compilation will want
+later. The `[apps]` table must sit on the extracted CLI package, not on ROMEO:
+on ROMEO it would make ArgParse and MriResearchTools hard dependencies of the
+kernel, which is the cycle X1 exists to remove. ROMEO.jl PR #9 proposed the idea
+with the wrong mechanism (a `bin/` script Pkg never reads, and it deletes
+`[weakdeps]` while keeping `[extensions]`); close it and keep the idea here.
+
 ---
 
 ## X2. Safe echo-time parser (also a security fix)
