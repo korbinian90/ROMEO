@@ -265,3 +265,10 @@ if isunix; setenv('LD_LIBRARY_PATH', paths); end
 
 ## Feedback
 Feature requests and bug reports are welcome!
+
+Note that this repository holds the documentation and downloads; the source code
+lives in [ROMEO.jl](https://github.com/korbinian90/ROMEO.jl) and the compiled
+binaries are built by [CompileMRI.jl](https://github.com/korbinian90/CompileMRI.jl).
+
+## License
+MIT, matching [ROMEO.jl](https://github.com/korbinian90/ROMEO.jl) - see [LICENSE](LICENSE).
