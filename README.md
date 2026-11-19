@@ -1,4 +1,7 @@
 # ROMEO Unwrapping
+
+> **Research use only. Not a medical device. Not intended for diagnosis, treatment or clinical decisions.**
+
 Unwrapping of 3D and 4D datasets.
 Coil combination of 5D datasets.  
 
